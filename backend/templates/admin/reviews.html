@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Reviews — Tutorly Admin{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% set active = 'reviews' %}
+      {% include "partials/admin_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Review Moderation</h1>
+        <p class="muted mb-3">Approve, flag, or remove reviews to keep the marketplace trustworthy.</p>
+
+        {% if reviews %}
+          <div class="grid grid-2">
+            {% for r in reviews %}
+              <div class="card">
+                <div class="flex-between" style="align-items:flex-start;">
+                  <div>
+                    <div class="stars" style="font-size:1rem;">{% for i in range(5) %}{% if i < r.rating %}★{% else %}☆{% endif %}{% endfor %}</div>
+                    <div class="muted" style="font-size:0.82rem; margin-top:4px;">{{ r.created_at.strftime('%d %b %Y') }}</div>
+                  </div>
+                  <span class="badge {% if r.moderation_status=='approved' %}badge-success{% elif r.moderation_status=='flagged' %}badge-warn{% elif r.moderation_status=='removed' %}badge-muted{% else %}badge-navy{% endif %}">{{ r.moderation_status|title }}</span>
+                </div>
+                <p style="margin:12px 0 6px;">{{ r.comment or 'No written comment.' }}</p>
+                <p class="muted" style="font-size:0.85rem; margin:0 0 14px;">
+                  By <strong>{{ r.author.name if r.author else 'Unknown' }}</strong> for
+                  <strong>{{ r.recipient.user.name if r.recipient and r.recipient.user else '—' }}</strong>
+                </p>
+                <div class="flex gap" style="flex-wrap:wrap;">
+                  {% if r.moderation_status != 'approved' %}
+                    <form method="post" action="{{ url_for('admin.moderate_review', review_id=r.id) }}" style="display:inline;">
+                      <input type="hidden" name="action" value="approve"><button type="submit" class="btn btn-primary btn-sm">Approve</button>
+                    </form>
+                  {% endif %}
+                  {% if r.moderation_status != 'flagged' %}
+                    <form method="post" action="{{ url_for('admin.moderate_review', review_id=r.id) }}" style="display:inline;">
+                      <input type="hidden" name="action" value="flag"><button type="submit" class="btn btn-outline btn-sm">Flag</button>
+                    </form>
+                  {% endif %}
+                  {% if r.moderation_status != 'removed' %}
+                    <form method="post" action="{{ url_for('admin.moderate_review', review_id=r.id) }}" style="display:inline;">
+                      <input type="hidden" name="action" value="remove"><button type="submit" class="btn btn-ghost btn-sm">Remove</button>
+                    </form>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">⭐</div><h3>No reviews yet</h3><p>Reviews will appear here for moderation.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Apply: {{ job.title }} — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <a href="{{ url_for('jobs.detail', job_id=job.id) }}" class="text-muted" style="font-size:0.9rem;">← Back to job</a>
+  </div>
+</section>
+<section class="section">
+  <div class="container" style="max-width:680px;">
+    <div class="eyebrow">Apply for job</div>
+    <h1 class="mb-1">{{ job.title }}</h1>
+    <p class="muted mb-3">{{ job.subject }} · {{ job.level }} · {{ job.budget_label }}</p>
+
+    <div class="card mb-3">
+      <h4 style="margin-bottom:6px;">Your profile</h4>
+      <div class="flex gap" style="align-items:center;">
+        <img src="{{ profile.user.avatar_url }}" alt="" style="width:44px; height:44px; border-radius:50%; object-fit:cover;">
+        <div><strong>{{ profile.user.name }}</strong><br><span class="muted" style="font-size:0.85rem;">${{ '%d'|format(profile.hourly_rate) }}/hour · {{ profile.years_experience }} yrs experience</span></div>
+      </div>
+    </div>
+
+    <form class="search-panel" action="{{ url_for('jobs.apply', job_id=job.id) }}" method="post">
+      <div class="form-group"><label for="message">Cover message *</label>
+        <textarea id="message" name="message" rows="6" required placeholder="Introduce yourself and explain why you're a great fit for this request..."></textarea></div>
+      <div class="grid grid-2">
+        <div class="form-group"><label for="proposed_rate">Proposed rate ($/hour)</label>
+          <input id="proposed_rate" name="proposed_rate" type="number" min="0" step="5" value="{{ '%d'|format(profile.hourly_rate) }}"></div>
+        <div class="form-group"><label for="availability">Your availability</label>
+          <input id="availability" name="availability" type="text" placeholder="e.g. weekday evenings"></div>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-row"><input type="checkbox" checked disabled><span>Attach an optional introduction video or files (demo — not uploaded)</span></label>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Submit application →</button>
+      <p class="hint mt-2">By applying, your profile details will be shared with the requester. Please follow our community rules.</p>
+    </form>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Leads — Tutorly Admin{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% set active = 'leads' %}
+      {% include "partials/admin_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Leads</h1>
+        <p class="muted mb-3">Marketing leads captured from public pages. Move them through the lifecycle.</p>
+
+        <div class="flex gap mb-3" style="flex-wrap:wrap;">
+          <a href="{{ url_for('admin.leads') }}" class="btn {% if not status %}btn-primary{% else %}btn-ghost{% endif %} btn-sm">All</a>
+          {% for s in ['new','contacted','matched','converted','lost'] %}
+            <a href="{{ url_for('admin.leads', status=s) }}" class="btn {% if status==s %}btn-primary{% else %}btn-ghost{% endif %} btn-sm">{{ s|title }}</a>
+          {% endfor %}
+        </div>
+
+        {% if leads %}
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Subject</th><th>Contact</th><th>Source</th><th>Level</th><th>Location</th><th>Budget</th><th>Status</th><th>Assigned</th><th>Update</th></tr></thead>
+              <tbody>
+                {% for l in leads %}
+                <tr>
+                  <td><strong>{{ l.subject or '—' }}</strong></td>
+                  <td style="font-size:0.85rem;">{{ l.email }}{% if l.name %}<br><span class="muted">{{ l.name }}</span>{% endif %}</td>
+                  <td class="muted" style="font-size:0.85rem;">{{ l.source_page }}</td>
+                  <td class="muted" style="font-size:0.85rem;">{{ l.level or '—' }}</td>
+                  <td class="muted" style="font-size:0.85rem;">{{ l.location or '—' }}</td>
+                  <td class="muted" style="font-size:0.85rem;">{{ l.budget or '—' }}</td>
+                  <td><span class="badge {% if l.lifecycle_status=='converted' %}badge-success{% elif l.lifecycle_status=='lost' %}badge-muted{% elif l.lifecycle_status=='new' %}badge-warn{% else %}badge-navy{% endif %}">{{ l.lifecycle_status|title }}</span></td>
+                  <td class="muted" style="font-size:0.85rem;">{{ l.assigned_to or '—' }}</td>
+                  <td>
+                    <form method="post" action="{{ url_for('admin.update_lead', lead_id=l.id) }}" style="display:flex; gap:6px;">
+                      <select name="lifecycle_status" style="padding:5px 6px; font-size:0.8rem;">
+                        {% for s in ['new','contacted','matched','converted','lost'] %}
+                          <option value="{{ s }}" {% if l.lifecycle_status==s %}selected{% endif %}>{{ s|title }}</option>
+                        {% endfor %}
+                      </select>
+                      <input type="text" name="assigned_to" value="{{ l.assigned_to or '' }}" placeholder="Owner" style="padding:5px 6px; font-size:0.8rem; width:80px;">
+                      <button type="submit" class="btn btn-ghost btn-sm">Save</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">🎯</div><h3>No leads found</h3><p>Leads captured from the public site will appear here.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

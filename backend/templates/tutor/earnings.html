@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Earnings — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Earnings</h1>
+        <p class="muted mb-3">A summary of your completed sessions. Tutorly takes a {{ commission_pct }}% commission on each completed booking.</p>
+
+        <div class="dash-grid mb-3">
+          <div class="dash-stat"><div class="icon">💵</div><div class="num">${{ '%.0f'|format(total) }}</div><div class="label">Gross earnings</div></div>
+          <div class="dash-stat"><div class="icon">🏛️</div><div class="num">${{ '%.0f'|format(commission) }}</div><div class="label">Platform fee ({{ commission_pct }}%)</div></div>
+          <div class="dash-stat"><div class="icon">🏦</div><div class="num">${{ '%.0f'|format(net) }}</div><div class="label">Net payout</div></div>
+          <div class="dash-stat"><div class="icon">✅</div><div class="num">{{ completed|length }}</div><div class="label">Completed sessions</div></div>
+        </div>
+
+        <h3 class="mb-2">Completed sessions</h3>
+        {% if completed %}
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Subject</th><th>Student</th><th>Date</th><th>Gross</th><th>Fee</th><th>Net</th><th>Payment</th></tr></thead>
+              <tbody>
+                {% for b in completed %}
+                <tr>
+                  <td><strong>{{ b.subject or 'General' }}</strong></td>
+                  <td>{{ b.learner.name }}</td>
+                  <td class="muted" style="font-size:0.85rem;">{{ b.start_at.strftime('%d %b %Y') if b.start_at else '—' }}</td>
+                  <td>${{ '%.0f'|format(b.price) }}</td>
+                  <td class="muted">${{ '%.0f'|format(b.price * 0.15) }}</td>
+                  <td><strong>${{ '%.0f'|format(b.price * 0.85) }}</strong></td>
+                  <td><span class="badge {% if b.payment_status=='paid' %}badge-success{% elif b.payment_status=='refunded' %}badge-muted{% else %}badge-navy{% endif %}">{{ b.payment_status|title }}</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">💰</div><h3>No completed sessions yet</h3><p>Your earnings will appear here once sessions are marked complete.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

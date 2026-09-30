@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Job Requests — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Job Requests</h1>
+        <p class="muted mb-3">Post a tutoring request and let qualified tutors come to you.</p>
+
+        <div class="card mb-3">
+          <h3 style="margin-bottom:14px;">Post a new request</h3>
+          <form action="{{ url_for('student.job_requests') }}" method="post">
+            <div class="grid grid-2">
+              <div class="form-group"><label for="title">Title *</label><input id="title" name="title" type="text" placeholder="e.g. Maths tutor for GCSE" required></div>
+              <div class="form-group"><label for="subject">Subject *</label><input id="subject" name="subject" type="text" placeholder="e.g. Mathematics" required></div>
+              <div class="form-group"><label for="level">Level</label><input id="level" name="level" type="text" placeholder="e.g. GCSE"></div>
+              <div class="form-group"><label for="teaching_mode">Mode</label><select id="teaching_mode" name="teaching_mode"><option value="online">Online</option><option value="in-person">In-person</option><option value="either">Either</option></select></div>
+              <div class="form-group"><label for="location">Location</label><input id="location" name="location" type="text" placeholder="City or Online"></div>
+              <div class="form-group"><label for="start_date">Start date</label><input id="start_date" name="start_date" type="date"></div>
+              <div class="form-group"><label for="budget_min">Budget min ($/hr)</label><input id="budget_min" name="budget_min" type="number" min="0"></div>
+              <div class="form-group"><label for="budget_max">Budget max ($/hr)</label><input id="budget_max" name="budget_max" type="number" min="0"></div>
+              <div class="form-group" style="grid-column:1/-1"><label for="schedule">Preferred schedule</label><input id="schedule" name="schedule" type="text" placeholder="e.g. 2 evenings per week"></div>
+              <div class="form-group" style="grid-column:1/-1"><label for="goals">Learning goals</label><textarea id="goals" name="goals" placeholder="What do you want to achieve?"></textarea></div>
+              <div class="form-group" style="grid-column:1/-1"><label for="details">Additional details</label><textarea id="details" name="details" placeholder="Anything else tutors should know"></textarea></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Post request →</button>
+          </form>
+        </div>
+
+        <h3 class="mb-2">Your requests</h3>
+        {% if my_jobs %}
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Title</th><th>Subject</th><th>Budget</th><th>Applicants</th><th>Status</th><th>Posted</th><th></th></tr></thead>
+              <tbody>
+                {% for job in my_jobs %}
+                <tr>
+                  <td><strong>{{ job.title }}</strong></td>
+                  <td>{{ job.subject }}</td>
+                  <td>{{ job.budget_label }}</td>
+                  <td>
+                    {% if job.application_count %}
+                      <a href="{{ url_for('student.job_applicants', job_id=job.id) }}">{{ job.application_count }} applicant{{ 's' if job.application_count != 1 }}</a>
+                    {% else %}0{% endif %}
+                  </td>
+                  <td><span class="badge {% if job.status=='open' %}badge-success{% else %}badge-muted{% endif %}">{{ job.status|title }}</span></td>
+                  <td>{{ job.age_label }}</td>
+                  <td>
+                    <a href="{{ url_for('jobs.detail', job_id=job.id) }}" class="btn btn-ghost btn-sm">View</a>
+                    {% if job.application_count %}<a href="{{ url_for('student.job_applicants', job_id=job.id) }}" class="btn btn-ghost btn-sm">Applicants</a>{% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">📋</div><h3>No requests yet</h3><p>Post your first request above to find tutors.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

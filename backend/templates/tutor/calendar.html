@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Calendar — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Calendar & Availability</h1>
+        <p class="muted mb-3">Your recurring weekly slots and booked sessions. Update your availability in <a href="{{ url_for('tutor.edit_profile') }}">Edit Profile</a>.</p>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <h3 style="margin:0 0 16px;">Weekly availability</h3>
+            {% set weekdays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+            <div class="avail-grid">
+              {% for d in weekdays %}
+                {% set slot = availability|selectattr('weekday','equalto',d)|first %}
+                <div class="avail-day">{{ d }}</div>
+                <div class="avail-slot {% if slot %}available{% endif %}">{% if slot %}{{ slot.start_time }}–{{ slot.end_time }}{% else %}—{% endif %}</div>
+              {% endfor %}
+            </div>
+            {% if availability %}
+              <p class="muted mt-2" style="font-size:0.85rem; margin-bottom:0;">Timezone: {{ availability[0].timezone }}</p>
+            {% else %}
+              <p class="muted mt-2" style="font-size:0.85rem; margin-bottom:0;">No availability set yet. Add your weekly slots to attract students.</p>
+            {% endif %}
+          </div>
+
+          <div class="card">
+            <h3 style="margin:0 0 16px;">Bookings</h3>
+            {% if bookings %}
+              {% for b in bookings %}
+                <div class="flex-between" style="padding:12px 0; border-bottom:1px solid var(--bg-alt); flex-wrap:wrap; gap:8px;">
+                  <div style="min-width:0;">
+                    <strong>{{ b.subject or 'Session' }}</strong>
+                    <div class="muted" style="font-size:0.82rem;">{{ b.learner.name }} · {{ b.start_at.strftime('%d %b %Y, %H:%M') if b.start_at else 'TBD' }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <span class="badge {% if b.status=='completed' %}badge-success{% elif b.status=='confirmed' %}badge-navy{% elif b.status=='cancelled' %}badge-muted{% else %}badge-warn{% endif %}">{{ b.status|title }}</span>
+                    {% if b.meeting_url %}<div style="margin-top:6px;"><a href="{{ b.meeting_url }}" class="text-coral" style="font-size:0.82rem;" target="_blank" rel="noopener">Join call →</a></div>{% endif %}
+                    <div class="flex gap" style="justify-content:flex-end; margin-top:8px;">
+                      {% if b.status == 'pending' %}
+                        <form action="{{ url_for('tutor.booking_action', booking_id=b.id, action='confirm') }}" method="post"><button type="submit" class="btn btn-primary btn-sm">Confirm</button></form>
+                        <form action="{{ url_for('tutor.booking_action', booking_id=b.id, action='cancel') }}" method="post"><button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger);">Decline</button></form>
+                      {% elif b.status == 'confirmed' %}
+                        <form action="{{ url_for('tutor.booking_action', booking_id=b.id, action='complete') }}" method="post"><button type="submit" class="btn btn-primary btn-sm">Mark completed</button></form>
+                        <form action="{{ url_for('tutor.booking_action', booking_id=b.id, action='cancel') }}" method="post"><button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger);">Cancel</button></form>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}<p class="muted">No bookings yet. Students who book with you will appear here.</p>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

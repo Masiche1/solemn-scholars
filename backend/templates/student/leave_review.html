@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Leave a Review — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <a href="{{ url_for('student.bookings') }}" class="text-muted" style="font-size:0.9rem;">← Back to bookings</a>
+  </div>
+</section>
+<section class="section">
+  <div class="container" style="max-width:560px;">
+    <div class="search-panel">
+      <h2 style="margin-top:0;">Review your session with {{ booking.tutor.name }}</h2>
+      <p class="muted mb-2">{{ booking.subject or 'Session' }} · {{ booking.start_at.strftime('%d %b %Y') if booking.start_at else '' }}</p>
+      <form action="{{ url_for('student.leave_review', booking_id=booking.id) }}" method="post">
+        <div class="form-group">
+          <label for="rating">Rating</label>
+          <select id="rating" name="rating" required>
+            <option value="5">★★★★★ — Excellent</option>
+            <option value="4">★★★★☆ — Great</option>
+            <option value="3">★★★☆☆ — Good</option>
+            <option value="2">★★☆☆☆ — Fair</option>
+            <option value="1">★☆☆☆☆ — Poor</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="comment">Your review</label>
+          <textarea id="comment" name="comment" rows="5" placeholder="How did the session go? Would you recommend this tutor?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Submit review →</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>

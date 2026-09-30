@@ -1,0 +1,27 @@
+{# Dashboard sidebar nav. Self-sufficient: derives role from current_user and
+   highlights the active link by comparing against the current request endpoint. #}
+<aside class="dash-nav">
+  {% if current_user.is_authenticated and current_user.role == 'student' %}
+    <a href="{{ url_for('student.dashboard') }}" class="{% if request.endpoint=='student.dashboard' %}active{% endif %}">📊 Overview</a>
+    <a href="{{ url_for('directory.directory') }}" class="{% if request.endpoint=='directory.directory' %}active{% endif %}">🔍 Find Tutors</a>
+    <a href="{{ url_for('student.saved_tutors') }}" class="{% if request.endpoint=='student.saved_tutors' %}active{% endif %}">⭐ Saved Tutors</a>
+    <a href="{{ url_for('student.messages') }}" class="{% if request.endpoint in ('student.messages','student.message_thread') %}active{% endif %}">💬 Messages</a>
+    <a href="{{ url_for('student.job_requests') }}" class="{% if request.endpoint in ('student.job_requests','student.job_applicants') %}active{% endif %}">📋 Job Requests</a>
+    <a href="{{ url_for('student.bookings') }}" class="{% if request.endpoint=='student.bookings' %}active{% endif %}">📅 Bookings</a>
+    <a href="{{ url_for('student.reviews') }}" class="{% if request.endpoint=='student.reviews' %}active{% endif %}">⭐ My Reviews</a>
+    <a href="{{ url_for('student.settings') }}" class="{% if request.endpoint=='student.settings' %}active{% endif %}">⚙️ Settings</a>
+  {% elif current_user.is_authenticated and current_user.role == 'tutor' %}
+    <a href="{{ url_for('tutor.dashboard') }}" class="{% if request.endpoint=='tutor.dashboard' %}active{% endif %}">📊 Overview</a>
+    <a href="{{ url_for('tutor.edit_profile') }}" class="{% if request.endpoint=='tutor.edit_profile' %}active{% endif %}">✏️ Edit Profile</a>
+    <a href="{{ url_for('tutor.job_feed') }}" class="{% if request.endpoint=='tutor.job_feed' %}active{% endif %}">📋 Job Feed</a>
+    <a href="{{ url_for('tutor.applications') }}" class="{% if request.endpoint=='tutor.applications' %}active{% endif %}">📨 Applications</a>
+    <a href="{{ url_for('tutor.messages') }}" class="{% if request.endpoint in ('tutor.messages','tutor.message_thread') %}active{% endif %}">💬 Messages</a>
+    <a href="{{ url_for('tutor.calendar') }}" class="{% if request.endpoint=='tutor.calendar' %}active{% endif %}">📅 Calendar</a>
+    <a href="{{ url_for('tutor.earnings') }}" class="{% if request.endpoint=='tutor.earnings' %}active{% endif %}">💰 Earnings</a>
+    <a href="{{ url_for('tutor.reviews') }}" class="{% if request.endpoint=='tutor.reviews' %}active{% endif %}">⭐ Reviews</a>
+    <a href="{{ url_for('tutor.verification') }}" class="{% if request.endpoint=='tutor.verification' %}active{% endif %}">✓ Verification</a>
+    <a href="{{ url_for('tutor.settings') }}" class="{% if request.endpoint=='tutor.settings' %}active{% endif %}">⚙️ Settings</a>
+  {% endif %}
+</aside>
+
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>

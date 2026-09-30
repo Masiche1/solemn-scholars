@@ -1,0 +1,38 @@
+{# Reusable tutor card. Expects: profile (TutorProfile), loop_index optional, saved_ids optional set #}
+<div class="tutor-card">
+  <div class="tutor-card-top">
+    <img class="tutor-avatar" src="{{ profile.user.avatar_url or 'https://i.pravatar.cc/200?u=' ~ profile.user.id }}" alt="{{ profile.user.name }}">
+    <div>
+      <div class="tutor-name">{{ profile.user.name }}</div>
+      <div class="tutor-headline">{{ profile.headline or 'Tutor' }}</div>
+      <div class="mt-1">
+        {% if profile.is_verified %}<span class="badge badge-verified">✓ Verified</span>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="stars">
+    {% with r = profile.avg_rating %}
+      {% for i in range(5) %}{% if i < (r|round) %}★{% else %}<span class="empty">★</span>{% endif %}{% endfor %}
+    {% endwith %}
+    <span class="text-muted" style="font-size:0.82rem; margin-left:6px;">{{ profile.avg_rating }} ({{ profile.review_count }} reviews)</span>
+  </div>
+
+  <div class="tutor-meta">
+    {% for s in profile.subjects[:3] %}
+      <span class="subject-chip">{{ s.name }}</span>
+    {% endfor %}
+  </div>
+
+  <div class="tutor-bio">{{ profile.biography[:180] if profile.biography else 'Experienced tutor ready to help you reach your goals.' }}{% if profile.biography and profile.biography|length > 180 %}…{% endif %}</div>
+
+  <div class="flex-between mb-2">
+    <span class="tutor-rate">From ${{ '%d'|format(profile.hourly_rate) }}<small>/hour</small></span>
+    <span class="text-muted" style="font-size:0.82rem;">{{ profile.location_name or 'Online' }}</span>
+  </div>
+
+  <div class="tutor-card-actions">
+    <a href="{{ url_for('directory.tutor_profile', tutor_id=profile.id) }}" class="btn btn-outline btn-sm">View Profile</a>
+    <a href="{{ url_for('directory.tutor_profile', tutor_id=profile.id) }}#contact" class="btn btn-primary btn-sm">Message</a>
+  </div>
+</div>

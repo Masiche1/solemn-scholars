@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Job Feed — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Job Feed</h1>
+        <p class="muted mb-3">Open tutoring requests from students and parents. Apply to the ones that fit your expertise.</p>
+
+        <div class="card mb-3" style="background:linear-gradient(135deg, var(--coral-soft), #fff); border-color:#ffd9cc;">
+          <div class="flex gap" style="align-items:center; flex-wrap:wrap;">
+            <div style="flex:1; min-width:200px;"><strong>{{ jobs|length }}</strong> open request{{ 's' if jobs|length != 1 else '' }} right now</div>
+            <span class="muted" style="font-size:0.88rem;">Sorted by newest first</span>
+          </div>
+        </div>
+
+        {% if jobs %}
+          <div class="grid grid-2">
+            {% for job in jobs %}
+              <div class="card job-card">
+                <div class="job-card-head">
+                  <span class="badge badge-coral">{{ job.subject or 'General' }}</span>
+                  <span class="muted" style="font-size:0.78rem;">{{ job.age_label }}</span>
+                </div>
+                <h3 style="margin:8px 0 6px;">{{ job.title }}</h3>
+                {% if job.goals %}<p class="muted" style="font-size:0.9rem; margin:0 0 10px;">{{ job.goals[:140] }}{% if job.goals|length > 140 %}…{% endif %}</p>{% endif %}
+                <div class="job-meta">
+                  {% if job.level %}<span class="chip">🎓 {{ job.level }}</span>{% endif %}
+                  <span class="chip">💻 {{ job.teaching_mode|title }}</span>
+                  {% if job.location %}<span class="chip">📍 {{ job.location }}</span>{% endif %}
+                  <span class="chip">💰 {{ job.budget_label }}</span>
+                  <span class="chip">📮 {{ job.application_count }} applicant{{ 's' if job.application_count != 1 else '' }}</span>
+                </div>
+                <div class="flex gap mt-2" style="flex-wrap:wrap;">
+                  <a href="{{ url_for('jobs.detail', job_id=job.id) }}" class="btn btn-ghost btn-sm">View details</a>
+                  {% if job.id in applied_ids %}
+                    <span class="badge badge-success" style="align-self:center;">✓ Applied</span>
+                  {% else %}
+                    <a href="{{ url_for('jobs.apply', job_id=job.id) }}" class="btn btn-primary btn-sm">Apply now</a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">📋</div><h3>No open jobs right now</h3><p>New requests appear here as students post them. Check back soon.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

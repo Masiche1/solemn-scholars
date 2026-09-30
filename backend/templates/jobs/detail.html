@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }} — Tutorly Jobs{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <a href="{{ url_for('jobs.feed') }}" class="text-muted" style="font-size:0.9rem;">← Back to job feed</a>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="profile-body-grid">
+      <div>
+        <div class="flex gap-sm" style="flex-wrap:wrap; margin-bottom:12px;">
+          <span class="badge badge-coral">{{ job.subject }}</span>
+          <span class="badge badge-navy">{{ job.level }}</span>
+          <span class="badge badge-online">{{ job.teaching_mode|title }}</span>
+          <span class="badge badge-muted">Posted {{ job.age_label }}</span>
+        </div>
+        <h1 style="margin-bottom:10px;">{{ job.title }}</h1>
+        <p class="muted mb-3">{{ job.goals }}</p>
+
+        <div class="profile-section">
+          <h3>Job details</h3>
+          <div class="grid grid-2" style="gap:10px;">
+            <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Subject</div><strong>{{ job.subject }}</strong></div>
+            <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Learner level</div><strong>{{ job.level }}</strong></div>
+            <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Teaching mode</div><strong>{{ job.teaching_mode|title }}</strong></div>
+            <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Location</div><strong>{{ job.location or 'Online' }}</strong></div>
+            <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Budget</div><strong>{{ job.budget_label }}</strong></div>
+            <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Schedule</div><strong>{{ job.schedule or 'Flexible' }}</strong></div>
+            <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Start date</div><strong>{{ job.start_date or 'Flexible' }}</strong></div>
+            <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Applicants</div><strong>{{ job.application_count }}</strong></div>
+          </div>
+        </div>
+
+        {% if job.additional_details %}
+        <div class="profile-section"><h3>Additional details</h3><p>{{ job.additional_details }}</p></div>
+        {% endif %}
+
+        <div class="profile-section">
+          <h3>Requester information</h3>
+          <div class="card" style="padding:16px;">
+            <div class="flex gap" style="align-items:center;">
+              <img src="{{ job.requester.avatar_url }}" alt="{{ job.requester.name }}" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+              <div>
+                <strong>{{ job.requester.name }}</strong>
+                <p class="muted" style="font-size:0.85rem; margin:0;">Member since {{ job.requester.created_at.strftime('%b %Y') }}</p>
+              </div>
+            </div>
+            <p class="muted mt-2" style="font-size:0.85rem; margin-bottom:0;">🔒 Contact details are shared only after you apply and the requester responds. Report suspicious listings anytime.</p>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h3>Safety &amp; community</h3>
+          <p class="muted" style="font-size:0.9rem;">Please review our community rules before applying. Do not share personal contact details in your application. Suspicious listings can be reported below.</p>
+          <form action="{{ url_for('jobs.report', job_id=job.id) }}" method="post" style="margin-top:10px;">
+            <input type="hidden" name="reason" value="Reported via job detail page">
+            <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger);">⚑ Report this job</button>
+          </form>
+        </div>
+
+        {% if similar %}
+        <div class="profile-section">
+          <h3>Similar jobs</h3>
+          <div class="grid grid-2">
+            {% for sj in similar %}{% include "partials/job_card.html" %}{% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div>
+        <div class="profile-cta-card">
+          <h3 style="margin-bottom:8px;">Interested in this job?</h3>
+          <p class="muted mb-2" style="font-size:0.92rem;">Apply with a short cover message, your proposed rate, and availability. The requester will be notified.</p>
+          {% if current_user.is_authenticated and current_user.is_tutor %}
+            {% if has_applied %}
+              <div class="alert alert-success">You've already applied to this job.</div>
+              <a href="{{ url_for('tutor.applications') }}" class="btn btn-outline btn-block">View my applications</a>
+            {% else %}
+              <a href="{{ url_for('jobs.apply', job_id=job.id) }}" class="btn btn-primary btn-block btn-lg">Apply now →</a>
+            {% endif %}
+          {% elif current_user.is_authenticated %}
+            <p class="muted" style="font-size:0.88rem;">Only tutor accounts can apply for jobs.</p>
+          {% else %}
+            <a href="{{ url_for('auth.signup', role='tutor') }}" class="btn btn-primary btn-block">Create a tutor account</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-block mt-1">Log in</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

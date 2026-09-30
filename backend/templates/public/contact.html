@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Contact — TutorsDen{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container text-center">
+    <div class="eyebrow">Contact us</div>
+    <h1 class="mb-1">We're here to help</h1>
+    <p class="lead-text" style="margin:0 auto;">Questions about finding a tutor, becoming one, or anything else? Send us a message and we'll respond within one business day.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:560px;">
+    <form class="search-panel" action="{{ url_for('public.contact') }}" method="post">
+      <div class="form-group"><label for="name">Your name</label><input id="name" name="name" type="text" required></div>
+      <div class="form-group"><label for="email">Email</label><input id="email" name="email" type="email" required></div>
+      <div class="form-group"><label for="message">How can we help?</label><textarea id="message" name="message" required></textarea></div>
+      <label class="checkbox-row mb-3"><input type="checkbox" name="consent" value="1" checked><span>I agree to be contacted in response to my enquiry.</span></label>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Send message →</button>
+    </form>
+    <div class="grid grid-3 mt-4">
+      <div class="card text-center"><div style="font-size:1.6rem;">📧</div><p class="mt-1" style="font-size:0.88rem;">hello@tutorsden.com</p></div>
+      <div class="card text-center"><div style="font-size:1.6rem;">💬</div><p class="mt-1" style="font-size:0.88rem;">Live chat 9–5</p></div>
+      <div class="card text-center"><div style="font-size:1.6rem;">📍</div><p class="mt-1" style="font-size:0.88rem;">Online, worldwide</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

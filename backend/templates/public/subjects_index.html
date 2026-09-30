@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Subjects — TutorsDen{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container text-center">
+    <div class="eyebrow">Browse subjects</div>
+    <h1 class="mb-1">Find a tutor in any subject</h1>
+    <p class="lead-text" style="margin:0 auto;">From core academics to music and coding, our tutors cover a wide range of subjects at every level.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="subject-grid">
+      {% for s in subjects %}
+        {% include "partials/subject_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Find a Tutor — TutorsDen{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container">
+    <div class="eyebrow">Find your match</div>
+    <h1 class="mb-1">Find a tutor who fits your goals</h1>
+    <p class="lead-text">Search by subject, level, and location. Every tutor is reviewed and verified, with transparent pricing and real reviews from families like yours.</p>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <form class="search-panel" action="{{ url_for('public.find_a_tutor') }}" method="post">
+      <div class="search-grid">
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject">
+            <option value="">Any subject</option>
+            {% for s in subjects %}<option value="{{ s.slug }}">{{ s.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="level">Student level</label>
+          <select id="level" name="level">
+            <option value="">Any level</option>
+            <option>Primary</option><option>11+</option><option>KS3</option>
+            <option>GCSE</option><option>A-Level</option><option>University</option><option>Adult</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="mode">Online or in-person</label>
+          <select id="mode" name="mode"><option value="">Either</option><option value="online">Online</option><option value="in-person">In-person</option></select>
+        </div>
+        <div class="form-group"><label for="location">Location</label><input id="location" name="location" type="text" placeholder="City or postcode"></div>
+        <div class="form-group"><label for="schedule">Preferred schedule</label><input id="schedule" name="schedule" type="text" placeholder="e.g. weekday evenings"></div>
+        <div class="form-group"><label for="email">Email</label><input id="email" name="email" type="email" placeholder="you@example.com" required></div>
+      </div>
+      <label class="checkbox-row mb-2"><input type="checkbox" name="consent" value="1" checked><span>I agree to be contacted about matching tutors.</span></label>
+      <button type="submit" class="btn btn-primary btn-lg">Show Me Tutors →</button>
+    </form>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="flex-between mb-3">
+      <h2>Featured tutors</h2>
+      <a href="{{ url_for('directory.directory') }}" class="btn btn-outline">Browse all →</a>
+    </div>
+    <div class="grid grid-3">
+      {% for profile in featured %}
+        {% include "partials/tutor_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="eyebrow">Why families choose TutorsDen</div>
+    <h2 class="mb-3 text-center">Benefits of using the platform</h2>
+    <div class="grid grid-3">
+      <div class="card card-hover"><h3>✓ Verified tutors</h3><p class="mt-1">Every tutor's identity and qualifications are checked before they're listed, so you can book with confidence.</p></div>
+      <div class="card card-hover"><h3>$ Transparent pricing</h3><p class="mt-1">See hourly rates up front. No hidden fees, no surprises — just clear, fair pricing.</p></div>
+      <div class="card card-hover"><h3>💬 Safe messaging</h3><p class="mt-1">Contact tutors through our secure platform. Your personal details stay private until you're ready.</p></div>
+      <div class="card card-hover"><h3>⭐ Real reviews</h3><p class="mt-1">Read honest feedback from other learners and parents before you decide.</p></div>
+      <div class="card card-hover"><h3>🌍 Flexible options</h3><p class="mt-1">Choose online lessons from anywhere, or meet a tutor locally for in-person support.</p></div>
+      <div class="card card-hover"><h3>🤝 Guided matching</h3><p class="mt-1">Not sure what you need? Tell us your goals and we'll suggest suitable tutors.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:780px;">
+    <div class="eyebrow">FAQ</div>
+    <h2 class="mb-3">Frequently asked questions</h2>
+    <div class="card mb-2"><h4>How do I know a tutor is qualified?</h4><p class="mt-1">All tutors submit qualifications and ID for review. Verified tutors display a green badge on their profile.</p></div>
+    <div class="card mb-2"><h4>How much does tutoring cost?</h4><p class="mt-1">Tutors set their own rates, typically between $30 and $60 per hour. You'll see the rate before you book.</p></div>
+    <div class="card mb-2"><h4>Can I have lessons online?</h4><p class="mt-1">Yes. Most tutors offer online lessons, and many also teach in person. Filter by your preferred mode.</p></div>
+    <div class="card mb-2"><h4>What if I'm not happy with my tutor?</h4><p class="mt-1">You can message other tutors at any time, and our team is here to help if anything goes wrong.</p></div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Start your search today</h2>
+      <p>Find a tutor who matches your goals, schedule, and budget.</p>
+      <a href="#search" class="btn btn-primary btn-lg">Find My Tutor →</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_desc %}TutorsDen — find trusted, verified tutors for any subject. Compare profiles, transparent pricing, and book one-to-one support that fits your schedule.{% endblock %}">
+  <title>{% block title %}TutorsDen — Find the right tutor for every learning goal{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="{{ url_for('public.home') }}" class="logo">
+        <span class="logo-mark">T</span> TutorsDen
+      </a>
+      <nav class="nav">
+        <a href="{{ url_for('public.home') }}" class="btn btn-ghost btn-sm">Home</a>
+        <a href="{{ url_for('directory.directory') }}">Find a Tutor</a>
+        <a href="{{ url_for('public.subjects_index') }}">Browse Subjects</a>
+        <a href="{{ url_for('jobs.feed') }}">Tutor Jobs</a>
+        <a href="{{ url_for('public.post_a_job') }}">Post a Job</a>
+        <a href="{{ url_for('public.become_a_tutor') }}">Become a Tutor</a>
+        <a href="{{ url_for('public.how_it_works') }}">How It Works</a>
+      </nav>
+      <div class="header-cta">
+        {% if current_user.is_authenticated %}
+          {% if current_user.is_admin %}
+            <a href="{{ url_for('admin.overview') }}" class="btn btn-ghost btn-sm">Admin</a>
+          {% elif current_user.is_tutor %}
+            <a href="{{ url_for('tutor.dashboard') }}" class="btn btn-ghost btn-sm">Dashboard</a>
+          {% else %}
+            <a href="{{ url_for('student.dashboard') }}" class="btn btn-ghost btn-sm">Dashboard</a>
+          {% endif %}
+          <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm">Log out</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}#search" class="btn btn-primary btn-sm">Log In</a>
+        {% endif %}
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="flash">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="{{ url_for('public.home') }}" class="logo"><span class="logo-mark">T</span> TutorsDen</a>
+          <p style="color:#a9b6cc; font-size:0.92rem; max-width:280px;">Find the right tutor for every learning goal — or find your next student sooner. Better matches, more confidence, less friction.</p>
+        </div>
+        <div>
+          <h4>For Students</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('directory.directory') }}">Find a Tutor</a></li>
+            <li><a href="{{ url_for('public.post_a_job') }}">Post a Job</a></li>
+            <li><a href="{{ url_for('public.subjects_index') }}">Subjects</a></li>
+            <li><a href="{{ url_for('public.locations_index') }}">Locations</a></li>
+            <li><a href="{{ url_for('public.how_it_works') }}">How It Works</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>For Tutors</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('public.become_a_tutor') }}">Become a Tutor</a></li>
+            <li><a href="{{ url_for('jobs.feed') }}">Job Feed</a></li>
+            <li><a href="{{ url_for('auth.signup', role='tutor') }}">Create Profile</a></li>
+            <li><a href="{{ url_for('public.about') }}">About Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('public.about') }}">About</a></li>
+            <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+            <li><a href="{{ url_for('public.privacy') }}">Privacy Policy</a></li>
+            <li><a href="{{ url_for('public.terms') }}">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© {{ current_year }} TutorsDen. All rights reserved.</span>
+        <span>Made for learners and educators.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

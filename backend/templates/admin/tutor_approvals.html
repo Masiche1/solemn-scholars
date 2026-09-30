@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Tutor Approvals — Tutorly Admin{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% set active = 'approvals' %}
+      {% include "partials/admin_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Tutor Approvals</h1>
+        <p class="muted mb-3">Review and approve tutor profiles, and manage identity verification.</p>
+
+        {% if verification_queue %}
+          <h2>Verification submissions</h2>
+          {% for submission in verification_queue %}
+            <div class="card mb-3">
+              <div class="flex-between" style="gap:16px; align-items:flex-start; flex-wrap:wrap;">
+                <div>
+                  <h3 style="margin:0 0 4px;">{{ submission.tutor_profile.user.name }}</h3>
+                  <p class="muted" style="margin:0 0 10px;">Submitted {{ submission.submitted_at.strftime('%d %b %Y %H:%M') }} UTC</p>
+                  {% for document in submission.documents %}
+                    <div style="margin-bottom:5px;">
+                      <a href="{{ url_for('admin.verification_document', document_id=document.id) }}">{{ document.label }}</a>
+                      <span class="muted">({{ document.original_filename }})</span>
+                    </div>
+                  {% endfor %}
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <form method="post" action="{{ url_for('admin.review_verification', submission_id=submission.id, action='approve') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-primary btn-sm">Approve verification</button>
+                  </form>
+                  <form method="post" action="{{ url_for('admin.review_verification', submission_id=submission.id, action='reject') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input name="rejection_reason" required placeholder="Reason for rejection" aria-label="Reason for rejection">
+                    <button type="submit" class="btn btn-outline btn-sm">Reject</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% if pending %}
+          {% for p in pending %}
+            <div class="card mb-3">
+              <div class="flex-between" style="align-items:flex-start; flex-wrap:wrap; gap:16px;">
+                <div style="flex:1; min-width:240px;">
+                  <h3 style="margin:0 0 4px;">{{ p.user.name }}</h3>
+                  <p class="muted" style="margin:0 0 8px; font-size:0.9rem;">{{ p.headline or 'No headline' }}</p>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <span class="badge badge-navy">Profile: {{ p.profile_status|title }}</span>
+                    <span class="badge {% if p.verification_status=='verified' %}badge-success{% elif p.verification_status=='pending' %}badge-warn{% else %}badge-muted{% endif %}">Verification: {{ p.verification_status|title }}</span>
+                    <span class="badge badge-muted">${{ '%.0f'|format(p.hourly_rate) }}/hr</span>
+                  </div>
+                </div>
+              </div>
+              {% if p.biography %}<p class="muted mt-2" style="font-size:0.9rem; margin-bottom:12px;">{{ p.biography[:300] }}{% if p.biography|length > 300 %}…{% endif %}</p>{% endif %}
+              {% if p.subjects %}<div style="margin-bottom:14px;">{% for s in p.subjects %}<span class="chip">{{ s.name }}</span> {% endfor %}</div>{% endif %}
+
+              <div class="flex gap" style="flex-wrap:wrap;">
+                {% if p.profile_status != 'approved' %}
+                  <form method="post" action="{{ url_for('admin.approve_profile', profile_id=p.id) }}" style="display:inline;">
+                    <input type="hidden" name="action" value="approve">
+                    <button type="submit" class="btn btn-primary btn-sm">Approve profile</button>
+                  </form>
+                {% endif %}
+                {% if p.profile_status not in ('rejected','approved') %}
+                  <form method="post" action="{{ url_for('admin.approve_profile', profile_id=p.id) }}" style="display:inline;">
+                    <input type="hidden" name="action" value="reject">
+                    <button type="submit" class="btn btn-outline btn-sm">Reject</button>
+                  </form>
+                {% endif %}
+                {% if p.verification_status != 'verified' %}
+                  <form method="post" action="{{ url_for('admin.approve_profile', profile_id=p.id) }}" style="display:inline;">
+                    <input type="hidden" name="action" value="verify">
+                    <button type="submit" class="btn btn-ghost btn-sm">Mark verified</button>
+                  </form>
+                {% else %}
+                  <form method="post" action="{{ url_for('admin.approve_profile', profile_id=p.id) }}" style="display:inline;">
+                    <input type="hidden" name="action" value="unverify">
+                    <button type="submit" class="btn btn-ghost btn-sm">Remove verification</button>
+                  </form>
+                {% endif %}
+                <a href="{{ url_for('directory.tutor_profile', tutor_id=p.id) }}" class="btn btn-ghost btn-sm" style="align-self:center;">View public profile</a>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state"><div class="icon">✓</div><h3>No profiles awaiting review</h3><p>All tutor profiles are approved.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

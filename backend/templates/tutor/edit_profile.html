@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Edit Profile</h1>
+        <p class="muted mb-3">This is what students see when they find you. The more detail you add, the better your matches.</p>
+
+        <form action="{{ url_for('tutor.edit_profile') }}" method="post">
+          <div class="card mb-3">
+            <h3 style="margin:0 0 16px;">The basics</h3>
+            <div class="form-group">
+              <label for="headline">Headline <span class="muted" style="font-weight:400;">(one line shown on your card)</span></label>
+              <input id="headline" name="headline" type="text" value="{{ profile.headline or '' }}" placeholder="e.g. Patient GCSE maths specialist with 8 years' experience">
+            </div>
+            <div class="grid grid-2">
+              <div class="form-group">
+                <label for="hourly_rate">Hourly rate ($)</label>
+                <input id="hourly_rate" name="hourly_rate" type="number" min="0" step="5" value="{{ profile.hourly_rate or '' }}">
+              </div>
+              <div class="form-group">
+                <label for="years_experience">Years of experience</label>
+                <input id="years_experience" name="years_experience" type="number" min="0" value="{{ profile.years_experience or 0 }}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Teaching modes</label>
+              <div class="check-row">
+                {% set modes = profile.modes_list %}
+                <label class="check-pill"><input type="checkbox" name="teaching_modes" value="online" {% if 'online' in modes %}checked{% endif %}> Online</label>
+                <label class="check-pill"><input type="checkbox" name="teaching_modes" value="in-person" {% if 'in-person' in modes %}checked{% endif %}> In-person</label>
+                <label class="check-pill"><input type="checkbox" name="teaching_modes" value="group" {% if 'group' in modes %}checked{% endif %}> Group</label>
+              </div>
+            </div>
+            <div class="grid grid-2">
+              <div class="form-group">
+                <label for="location_name">Location</label>
+                <input id="location_name" name="location_name" type="text" value="{{ profile.location_name or '' }}" placeholder="City or area">
+              </div>
+              <div class="form-group">
+                <label for="languages">Languages</label>
+                <input id="languages" name="languages" type="text" value="{{ profile.languages or '' }}" placeholder="English, French, ...">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="response_time">Typical response time</label>
+              <select id="response_time" name="response_time">
+                {% for opt in ['within an hour','within a few hours','within a day','within 2 days'] %}
+                  <option value="{{ opt }}" {% if profile.response_time == opt %}selected{% endif %}>{{ opt|title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <h3 style="margin:0 0 16px;">Subjects you teach</h3>
+            <p class="muted" style="margin:0 0 14px; font-size:0.88rem;">Select all that apply — these drive your matches and search visibility.</p>
+            <div class="check-grid">
+              {% for s in all_subjects %}
+                <label class="check-pill"><input type="checkbox" name="subjects" value="{{ s.slug }}" {% if s in profile.subjects %}checked{% endif %}> {{ s.name }}</label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <h3 style="margin:0 0 16px;">Your story</h3>
+            <div class="form-group">
+              <label for="biography">Biography</label>
+              <textarea id="biography" name="biography" rows="5" placeholder="Who you are, who you help, and what makes your sessions different.">{{ profile.biography or '' }}</textarea>
+            </div>
+            <div class="form-group">
+              <label for="teaching_approach">Teaching approach</label>
+              <textarea id="teaching_approach" name="teaching_approach" rows="4" placeholder="How you structure lessons, build confidence, and track progress.">{{ profile.teaching_approach or '' }}</textarea>
+            </div>
+            <div class="form-group">
+              <label for="qualifications">Qualifications</label>
+              <textarea id="qualifications" name="qualifications" rows="3" placeholder="Degrees, certifications, DBS status, teaching experience.">{{ profile.qualifications or '' }}</textarea>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <h3 style="margin:0 0 16px;">Weekly availability</h3>
+            <p class="muted" style="margin:0 0 14px; font-size:0.88rem;">Toggle the days you're available and set typical hours. Students see this on your profile.</p>
+            {% set weekdays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+            <div class="avail-editor">
+              {% for wd in weekdays %}
+                {% set slot = profile.availability|selectattr('weekday','equalto',wd)|first %}
+                <div class="avail-edit-row">
+                  <label class="avail-toggle">
+                    <input type="checkbox" name="avail_{{ wd }}" value="1" {% if slot %}checked{% endif %} data-avail-toggle>
+                    <span>{{ wd }}</span>
+                  </label>
+                  <input type="time" name="avail_{{ wd }}_start" value="{{ slot.start_time if slot else '17:00' }}" data-avail-time>
+                  <span class="muted">to</span>
+                  <input type="time" name="avail_{{ wd }}_end" value="{{ slot.end_time if slot else '20:00' }}" data-avail-time>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="flex gap" style="flex-wrap:wrap;">
+            <button type="submit" name="action" value="save" class="btn btn-outline">Save draft</button>
+            {% if profile.profile_status != 'approved' %}
+              <button type="submit" name="action" value="submit" class="btn btn-primary">Submit for review →</button>
+            {% else %}
+              <button type="submit" name="action" value="save" class="btn btn-primary">Save changes</button>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

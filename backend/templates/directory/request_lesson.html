@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Request a Lesson with {{ profile.user.name }} — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <a href="{{ url_for('directory.tutor_profile', tutor_id=profile.id) }}" class="text-muted" style="font-size:0.9rem;">← Back to {{ profile.user.name }}'s profile</a>
+  </div>
+</section>
+<section class="section">
+  <div class="container" style="max-width:640px;">
+    <div class="search-panel">
+      <div class="flex gap" style="align-items:center; margin-bottom:16px;">
+        <img src="{{ profile.user.avatar_url }}" alt="{{ profile.user.name }}" style="width:56px; height:56px; border-radius:50%; object-fit:cover;">
+        <div><h2 style="margin:0; font-size:1.3rem;">Request a lesson with {{ profile.user.name }}</h2><p class="muted" style="font-size:0.88rem; margin:0;">${{ '%d'|format(profile.hourly_rate) if profile.hourly_rate else '—' }}/hour · {{ profile.modes_list|join(' & ')|title }}</p></div>
+      </div>
+      <p class="muted mb-2">Propose a subject, date, and time. The tutor will confirm your booking and you'll see it in your Bookings dashboard.</p>
+      <form action="{{ url_for('directory.request_lesson', tutor_id=profile.id) }}" method="post">
+        <div class="form-group"><label for="subject">Subject</label>
+          <select id="subject" name="subject">
+            {% for s in profile.subjects %}<option value="{{ s.name }}">{{ s.name }}</option>{% endfor %}
+            {% if not profile.subjects %}<option value="General">General</option>{% endif %}
+          </select>
+        </div>
+        <div class="grid grid-2">
+          <div class="form-group"><label for="date">Preferred date</label><input id="date" name="date" type="date"></div>
+          <div class="form-group"><label for="time">Preferred time</label><input id="time" name="time" type="time"></div>
+        </div>
+        <div class="form-group"><label for="notes">Notes for the tutor</label>
+          <textarea id="notes" name="notes" rows="4" placeholder="What would you like to cover in this session?"></textarea></div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Send booking request →</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>

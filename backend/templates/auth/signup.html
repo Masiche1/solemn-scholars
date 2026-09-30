@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Sign Up — Tutorly{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="auth-card">
+    <div class="text-center mb-3">
+      <a href="{{ url_for('public.home') }}" class="logo" style="justify-content:center;"><span class="logo-mark">T</span> Tutorly</a>
+    </div>
+    <h1>Create your account</h1>
+    <p class="sub">Join Tutorly as a student or a tutor.</p>
+
+    <div class="role-tabs">
+      <a href="{{ url_for('auth.signup', role='student') }}" class="{% if role=='student' %}active{% endif %}">I'm a Student</a>
+      <a href="{{ url_for('auth.signup', role='tutor') }}" class="{% if role=='tutor' %}active{% endif %}">I'm a Tutor</a>
+    </div>
+
+    <form action="{{ url_for('auth.signup') }}?role={{ role }}" method="post">
+      <input type="hidden" name="role" value="{{ role }}">
+      <div class="form-group"><label for="name">Full name</label><input id="name" name="name" type="text" value="{{ name or '' }}" required></div>
+      <div class="form-group"><label for="email">Email</label><input id="email" name="email" type="email" value="{{ email or '' }}" required></div>
+      <div class="form-group"><label for="password">Password</label><input id="password" name="password" type="password" required><div class="hint">At least 6 characters.</div></div>
+      <div class="form-group"><label for="confirm_password">Confirm password</label><input id="confirm_password" name="confirm_password" type="password" required></div>
+      <label class="checkbox-row mb-3"><input type="checkbox" name="consent" value="1" required><span>I agree to the <a href="{{ url_for('public.terms') }}">Terms of Service</a> and <a href="{{ url_for('public.privacy') }}">Privacy Policy</a>.</span></label>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Create account →</button>
+    </form>
+    <div class="auth-foot">Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></div>
+  </div>
+</section>
+{% endblock %}

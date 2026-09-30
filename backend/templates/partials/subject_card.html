@@ -1,0 +1,34 @@
+{# Reusable rich subject card with image illustration.
+   Expects: s (Subject model instance) #}
+<a href="{{ url_for('public.subject_landing', slug=s.slug) }}" class="subject-card">
+  <div class="subject-image-wrap">
+    {% if s.image %}
+    <img src="{{ url_for('static', filename='img/subjects/' ~ s.image) }}" alt="{{ s.name }} tutoring">
+    {% else %}
+    <img src="{{ url_for('static', filename='img/subjects/placeholder.jpg') }}" alt="{{ s.name }} tutoring">
+    {% endif %}
+    <span class="level-badge">Expert tutors</span>
+  </div>
+  <div class="subject-body">
+    <div class="subject-heading">
+      <span class="subject-icon">{{ s.symbol or '' }}</span>
+      <h3>{{ s.name }}</h3>
+    </div>
+    {% if s.description %}
+    <p>{{ s.description }}</p>
+    {% endif %}
+    <div class="stats">
+      {% if s.tutor_count %}
+      <span>&#x265f; {{ '{:,}'.format(s.tutor_count) }} Tutors</span>
+      {% endif %}
+      {% if s.rating %}
+      <span class="rating">&#9733; {{ '%.1f'|format(s.rating) }}</span>
+      {% endif %}
+    </div>
+    {% if s.price_from %}
+    <div class="price">From <strong>${{ s.price_from }}</strong><small>/hr</small></div>
+    {% endif %}
+    <span class="find-btn">Find a Tutor <span>&rarr;</span></span>
+  </div>
+</a>
+

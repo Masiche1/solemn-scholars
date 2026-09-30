@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}About — TutorsDen{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container text-center">
+    <div class="eyebrow">About TutorsDen</div>
+    <h1 class="mb-1">Better matches. More confidence. Less friction.</h1>
+    <p class="lead-text" style="margin:0 auto;">We're building the most trusted way to find the right tutor — and the most rewarding place to be one.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:780px;" class="prose">
+    <div class="prose">
+      <h3>Our mission</h3>
+      <p>Every learner deserves support that fits them — not the other way around. TutorsDen connects students and parents with qualified, verified tutors who can make a genuine difference, while giving tutors a fair, transparent way to find the students who need their expertise.</p>
+      <h3>Three promises</h3>
+      <p><strong>Better matches.</strong> Relevant tutors and opportunities, surfaced through clear profiles and a curated job feed. <strong>More confidence.</strong> Verified identities, qualifications, and reviews so you can book with peace of mind. <strong>Less friction.</strong> Simple discovery, secure messaging, transparent booking, and helpful follow-up at every step.</p>
+      <h3>How we keep the marketplace safe</h3>
+      <p>We verify tutor identities and qualifications, moderate job listings, provide in-platform messaging so personal details stay private, and give everyone tools to report or block. Our community standards and safeguarding policies apply to all members.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="stat-band">
+      <div class="stat-card"><div class="num">{{ total_tutors|default(10) }}+</div><div class="label">Verified tutors</div></div>
+      <div class="stat-card"><div class="num">{{ total_lessons|default(5000)|string + '+' }}</div><div class="label">Lessons completed</div></div>
+      <div class="stat-card"><div class="num">{{ total_subjects|default(0) }}</div><div class="label">Subjects covered</div></div>
+      <div class="stat-card"><div class="num">{{ total_locations|default(0) }}</div><div class="label">Locations served</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Join the TutorsDen community</h2>
+      <p>Find a tutor, or become one — it only takes a minute to get started.</p>
+      <div class="flex-center" style="justify-content:center; gap:14px; flex-wrap:wrap;">
+        <a href="{{ url_for('directory.directory') }}" class="btn btn-primary btn-lg">Find a Tutor</a>
+        <a href="{{ url_for('public.become_a_tutor') }}" class="btn btn-outline btn-lg" style="border-color:#fff; color:#fff;">Become a Tutor</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

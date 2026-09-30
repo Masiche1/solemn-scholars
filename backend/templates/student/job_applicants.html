@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Applicants — {{ job.title }} — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <a href="{{ url_for('student.job_requests') }}" class="text-muted" style="font-size:0.9rem;">← Back to job requests</a>
+        <h1 class="mt-2">Applicants for "{{ job.title }}"</h1>
+        <p class="muted mb-3">{{ job.subject }} · {{ job.budget_label }} · <span class="badge {% if job.status=='open' %}badge-success{% else %}badge-muted{% endif %}">{{ job.status|title }}</span></p>
+
+        {% if applications %}
+          <div class="grid" style="gap:14px;">
+            {% for a in applications %}
+              {% set profile = a.tutor_user.tutor_profile %}
+              <div class="card" style="padding:18px;">
+                <div class="flex-between" style="align-items:flex-start; flex-wrap:wrap; gap:10px;">
+                  <div class="flex gap" style="align-items:center;">
+                    <img src="{{ a.tutor_user.avatar_url }}" alt="{{ a.tutor_user.name }}" style="width:52px; height:52px; border-radius:50%; object-fit:cover;">
+                    <div>
+                      <strong style="font-size:1.05rem;">{{ a.tutor_user.name }}</strong>
+                      {% if profile %}<p class="muted" style="margin:0; font-size:0.88rem;">{{ profile.headline or 'Tutor' }} · ${{ '%d'|format(profile.hourly_rate) if profile.hourly_rate else '—' }}/hr</p>{% endif %}
+                      {% if profile and profile.avg_rating %}<p class="muted" style="margin:0; font-size:0.85rem;">★ {{ profile.avg_rating }} ({{ profile.review_count }} review{{ 's' if profile.review_count != 1 }})</p>{% endif %}
+                    </div>
+                  </div>
+                  <span class="badge {% if a.status=='accepted' %}badge-success{% elif a.status in ('declined','withdrawn') %}badge-muted{% else %}badge-navy{% endif %}">{{ a.status|title }}</span>
+                </div>
+                {% if a.message %}<p class="mt-2" style="font-size:0.92rem;">{{ a.message }}</p>{% endif %}
+                <div class="flex gap" style="flex-wrap:wrap; margin-top:8px; font-size:0.85rem;" class="muted">
+                  {% if a.proposed_rate %}<span class="muted">Proposed rate: ${{ '%.0f'|format(a.proposed_rate) }}/hr</span>{% endif %}
+                  {% if a.availability_note %}<span class="muted">· Availability: {{ a.availability_note }}</span>{% endif %}
+                  <span class="muted">· Applied {{ a.created_at.strftime('%d %b %Y') }}</span>
+                </div>
+                <div class="flex gap mt-2">
+                  {% if profile %}<a href="{{ url_for('directory.tutor_profile', tutor_id=profile.id) }}" class="btn btn-outline btn-sm">View profile</a>{% endif %}
+                  {% if a.status == 'pending' %}
+                    <form action="{{ url_for('student.job_applicant_action', job_id=job.id, app_id=a.id, action='accept') }}" method="post">
+                      <button type="submit" class="btn btn-primary btn-sm">Accept</button>
+                    </form>
+                    <form action="{{ url_for('student.job_applicant_action', job_id=job.id, app_id=a.id, action='decline') }}" method="post">
+                      <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger);">Decline</button>
+                    </form>
+                  {% elif a.status == 'accepted' %}
+                    <a href="{{ url_for('student.messages') }}" class="btn btn-ghost btn-sm">Message tutor</a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">📭</div><h3>No applicants yet</h3><p>Tutors who apply to this request will appear here.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>

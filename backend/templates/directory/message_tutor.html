@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Message {{ profile.user.name }} — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <a href="{{ url_for('directory.tutor_profile', tutor_id=profile.id) }}" class="text-muted" style="font-size:0.9rem;">← Back to {{ profile.user.name }}'s profile</a>
+  </div>
+</section>
+<section class="section">
+  <div class="container" style="max-width:640px;">
+    <div class="search-panel">
+      <div class="flex gap" style="align-items:center; margin-bottom:16px;">
+        <img src="{{ profile.user.avatar_url }}" alt="{{ profile.user.name }}" style="width:56px; height:56px; border-radius:50%; object-fit:cover;">
+        <div><h2 style="margin:0; font-size:1.3rem;">Message {{ profile.user.name }}</h2><p class="muted" style="font-size:0.88rem; margin:0;">{{ profile.headline }}</p></div>
+      </div>
+      <p class="muted mb-2">Explain your goals, level, and preferred schedule. The tutor will reply with a personalised response.</p>
+      <form action="{{ url_for('directory.message_tutor', tutor_id=profile.id) }}" method="post">
+        <div class="form-group"><label for="body">Your message</label>
+        <textarea id="body" name="body" rows="6" required placeholder="Hi {{ profile.user.name.split()[0] }}, I'm looking for help with..."></textarea></div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Send message →</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

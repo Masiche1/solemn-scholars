@@ -1,0 +1,26 @@
+{# Reusable job card. Expects: job, applied_ids (optional set) #}
+<div class="card card-hover">
+  <div class="flex-between mb-1">
+    <span class="badge badge-coral">{{ job.subject or 'General' }}</span>
+    <span class="muted" style="font-size:0.8rem;">Posted {{ job.age_label }}</span>
+  </div>
+  <h3 style="font-size:1.1rem; margin-bottom:6px;">{{ job.title }}</h3>
+  <p class="muted" style="font-size:0.9rem; margin-bottom:12px;">{{ job.goals[:120] if job.goals }}{% if job.goals and job.goals|length > 120 %}…{% endif %}</p>
+  <div class="flex gap-sm" style="flex-wrap:wrap; margin-bottom:14px;">
+    <span class="badge badge-navy">{{ job.level or 'Any level' }}</span>
+    <span class="badge badge-online">{{ job.teaching_mode|title }}</span>
+    {% if job.location and job.location != 'Online' %}<span class="badge badge-muted">📍 {{ job.location }}</span>{% endif %}
+    <span class="badge badge-muted">💰 {{ job.budget_label }}</span>
+    <span class="badge badge-muted">👥 {{ job.application_count }} applicant{{ 's' if job.application_count != 1 else '' }}</span>
+  </div>
+  <div class="flex gap-sm">
+    <a href="{{ url_for('jobs.detail', job_id=job.id) }}" class="btn btn-outline btn-sm" style="flex:1;">View job</a>
+    {% if current_user.is_authenticated and current_user.is_tutor %}
+      {% if job.id in applied_ids %}
+        <span class="btn btn-sm" style="flex:1; background:var(--mint-soft); color:var(--success); cursor:default;">✓ Applied</span>
+      {% else %}
+        <a href="{{ url_for('jobs.apply', job_id=job.id) }}" class="btn btn-primary btn-sm" style="flex:1;">Apply</a>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

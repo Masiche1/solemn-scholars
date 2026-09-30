@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ subject.name }} Tutors — TutorsDen{% endblock %}
+{% block meta_desc %}Find a {{ subject.name }} tutor on TutorsDen. Compare verified tutors, see transparent pricing, and book online or in person.{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container">
+    <div class="eyebrow">{{ subject.icon }} {{ subject.name }}</div>
+    <h1 class="mb-1">Find a {{ subject.name }} Tutor</h1>
+    <p class="lead-text">Build confidence and improve results with a verified {{ subject.name|lower }} tutor. Compare profiles, read reviews, and book lessons that fit your schedule — online or in person.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h3 class="mb-2">Browse by level</h3>
+    <div class="flex gap-sm" style="flex-wrap:wrap;">
+      <span class="badge badge-navy">Primary</span><span class="badge badge-navy">11+</span>
+      <span class="badge badge-navy">KS3</span><span class="badge badge-navy">GCSE</span>
+      <span class="badge badge-navy">A-Level</span><span class="badge badge-navy">University</span><span class="badge badge-navy">Adult</span>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="flex-between mb-3">
+      <h2>Featured {{ subject.name }} tutors</h2>
+      <a href="{{ url_for('directory.directory', subject=subject.slug) }}" class="btn btn-outline">See all →</a>
+    </div>
+    {% if tutors %}
+    <div class="grid grid-3">
+      {% for profile in tutors %}{% include "partials/tutor_card.html" %}{% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="icon">🔍</div><h3>No tutors listed yet</h3><p>Post a job and we'll match you with qualified {{ subject.name|lower }} tutors.</p><a href="{{ url_for('public.post_a_job') }}" class="btn btn-primary">Post a Job</a></div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:780px;">
+    <h2 class="mb-2">Common learning goals</h2>
+    <ul class="bullets">
+      <li>Catch up on missed topics and rebuild confidence</li>
+      <li>Prepare for exams with past-paper practice and technique</li>
+      <li>Stretch high achievers with extension material</li>
+      <li>Support specific coursework or assignments</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Need a {{ subject.name }} tutor?</h2>
+      <p>Post your request and qualified tutors will respond.</p>
+      <a href="{{ url_for('public.post_a_job') }}" class="btn btn-primary btn-lg">Post a Job</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

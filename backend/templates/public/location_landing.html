@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Tutors in {{ location.name }} — Tutorly{% endblock %}
+{% block meta_desc %}Find tutors in {{ location.name }} with Tutorly. Online and in-person options, verified profiles, and transparent pricing.{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container">
+    <div class="eyebrow">📍 {{ location.name }}</div>
+    <h1 class="mb-1">Tutors in {{ location.name }}</h1>
+    <p class="lead-text">Connect with trusted local tutors in {{ location.name }} for in-person lessons, or learn online with tutors from anywhere. Verified profiles, real reviews, and transparent pricing.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="grid grid-3">
+      <div class="card"><h3>Online options</h3><p class="mt-1">Can't find a local tutor? Most of our tutors teach online, so you can learn from anywhere.</p></div>
+      <div class="card"><h3>In-person lessons</h3><p class="mt-1">Meet tutors locally for face-to-face support at home, in a library, or another agreed location.</p></div>
+      <div class="card"><h3>Travel &amp; availability</h3><p class="mt-1">Check each tutor's profile for travel radius and availability before booking.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="mb-3">Local tutor profiles</h2>
+    {% if tutors %}
+    <div class="grid grid-3">
+      {% for profile in tutors %}{% include "partials/tutor_card.html" %}{% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="icon">🔍</div><h3>No local tutors listed yet</h3><p>Try online tutors, or post a job to find a match.</p><a href="{{ url_for('public.post_a_job') }}" class="btn btn-primary">Post a Job</a></div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h3 class="mb-2">Popular subjects in {{ location.name }}</h3>
+    <div class="flex gap-sm" style="flex-wrap:wrap;">
+      {% for s in subjects %}<a href="{{ url_for('public.subject_landing', slug=s.slug) }}" class="subject-chip" style="padding:6px 14px;">{{ s.name }}</a>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Looking for a tutor in {{ location.name }}?</h2>
+      <p>Post your request and we'll match you with local tutors.</p>
+      <a href="{{ url_for('public.post_a_job') }}" class="btn btn-primary btn-lg">Post a Job</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

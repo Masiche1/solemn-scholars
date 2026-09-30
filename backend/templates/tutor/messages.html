@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Messages — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Messages</h1>
+        <p class="muted mb-3">Conversations with students and parents.</p>
+
+        <div class="messages-layout">
+          <div class="convo-list">
+            {% if conversations %}
+              {% for c in conversations %}
+                {% set other = (c.participant_a if c.participant_b_id == current_user.id else c.participant_b) %}
+                <a href="{{ url_for('tutor.message_thread', convo_id=c.id) }}" class="convo-item {% if active_convo and active_convo.id==c.id %}active{% endif %}" style="text-decoration:none; color:inherit;">
+                  <img src="{{ other.avatar_url }}" alt="{{ other.name }}">
+                  <div style="flex:1; min-width:0;"><div class="fw-700" style="color:var(--navy); font-size:0.9rem;">{{ other.name }}</div>
+                    <div class="muted" style="font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ c.messages[-1].body[:40] if c.messages else 'No messages yet' }}</div>
+                  </div>
+                </a>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state" style="padding:40px 20px;"><div class="icon">💬</div><h3>No conversations</h3><p style="font-size:0.9rem;">Students who message you will appear here.</p></div>
+            {% endif %}
+          </div>
+
+          <div class="convo-thread">
+            {% if active_convo %}
+              <div class="thread-head">Conversation with {{ other_user.name }}</div>
+              <div class="thread-body">
+                {% for m in active_convo.messages %}
+                  <div class="msg {% if m.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                    {{ m.body }}
+                    <div class="time">{{ m.created_at.strftime('%d %b, %H:%M') }}</div>
+                  </div>
+                {% endfor %}
+              </div>
+              <form class="thread-input" action="" method="post">
+                <input type="text" name="body" placeholder="Type a message…" required>
+                <button type="submit" class="btn btn-primary btn-sm">Send</button>
+              </form>
+            {% else %}
+              <div class="empty-state" style="margin:auto;"><div class="icon">💬</div><h3>Select a conversation</h3><p>Choose a conversation from the list to view messages.</p></div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

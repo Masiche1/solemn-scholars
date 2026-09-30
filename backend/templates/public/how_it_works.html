@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}How It Works — TutorsDen{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container text-center">
+    <div class="eyebrow">How it works</div>
+    <h1 class="mb-1">A simpler way to find the right tutor</h1>
+    <p class="lead-text" style="margin:0 auto;">Whether you're a parent searching for support or a tutor looking for students, TutorsDen makes the whole process straightforward.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="eyebrow">For students &amp; parents</div>
+        <h2 class="mb-3">Find your tutor in four steps</h2>
+        <ul class="clean">
+          <li><strong>Search</strong> by subject, level, and location — or post a job and let tutors come to you.</li>
+          <li><strong>Compare</strong> verified profiles with ratings, reviews, and transparent pricing.</li>
+          <li><strong>Message</strong> your shortlisted tutors to discuss goals and availability.</li>
+          <li><strong>Book</strong> your first lesson, attend, and leave a review to help others.</li>
+        </ul>
+        <a href="{{ url_for('directory.directory') }}" class="btn btn-primary mt-3">Find a Tutor</a>
+      </div>
+      <div class="card">
+        <div class="eyebrow">For tutors</div>
+        <h2 class="mb-3">Build your tutoring business</h2>
+        <ul class="clean">
+          <li><strong>Create</strong> a profile showcasing your qualifications and teaching style.</li>
+          <li><strong>Get verified</strong> with our ID and credentials check for a trust badge.</li>
+          <li><strong>Browse jobs</strong> in your subject and apply to the ones that suit you.</li>
+          <li><strong>Teach &amp; earn</strong> — set your rates, build reviews, and grow your reputation.</li>
+        </ul>
+        <a href="{{ url_for('auth.signup', role='tutor') }}" class="btn btn-primary mt-3">Become a Tutor</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="eyebrow">Trust &amp; safety</div>
+    <h2 class="mb-3 text-center">Built on trust</h2>
+    <div class="grid grid-4">
+      <div class="card text-center"><div style="font-size:1.8rem;">✓</div><h4 class="mt-1">Verified tutors</h4><p class="mt-1" style="font-size:0.9rem;">ID and qualifications checked.</p></div>
+      <div class="card text-center"><div style="font-size:1.8rem;">🔒</div><h4 class="mt-1">Secure messaging</h4><p class="mt-1" style="font-size:0.9rem;">In-platform, private contact.</p></div>
+      <div class="card text-center"><div style="font-size:1.8rem;">💰</div><h4 class="mt-1">Transparent pricing</h4><p class="mt-1" style="font-size:0.9rem;">See rates before you book.</p></div>
+      <div class="card text-center"><div style="font-size:1.8rem;">🛡️</div><h4 class="mt-1">Report &amp; block</h4><p class="mt-1" style="font-size:0.9rem;">Tools to keep everyone safe.</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

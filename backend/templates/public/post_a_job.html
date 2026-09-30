@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Post a Tutoring Job — TutorsDen{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container">
+    <div class="eyebrow">Post a job</div>
+    <h1 class="mb-1">Tell us what you need, and qualified tutors can respond</h1>
+    <p class="lead-text">Posting a request is free. Describe your goals and budget, and interested tutors will reach out with a personalised proposal.</p>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container" style="max-width:760px;">
+    <form class="search-panel" action="{{ url_for('public.post_a_job') }}" method="post">
+      <div class="search-grid">
+        <div class="form-group"><label for="subject">Subject *</label>
+          <select id="subject" name="subject" required>
+            <option value="">Select a subject</option>
+            {% for s in subjects %}<option>{{ s.name }}</option>{% endfor %}
+          </select></div>
+        <div class="form-group"><label for="level">Student age or level *</label>
+          <select id="level" name="level" required>
+            <option value="">Select level</option>
+            <option>Primary</option><option>11+</option><option>KS3</option>
+            <option>GCSE</option><option>A-Level</option><option>University</option><option>Adult</option>
+          </select></div>
+        <div class="form-group full"><label for="goals">Learning goals</label>
+          <textarea id="goals" name="goals" placeholder="e.g. Build confidence in algebra before summer exams; help with coursework"></textarea></div>
+        <div class="form-group"><label for="mode">Online or in-person</label>
+          <select id="mode" name="mode"><option value="online">Online</option><option value="in-person">In-person</option><option value="either">Either</option></select></div>
+        <div class="form-group"><label for="location">Location</label><input id="location" name="location" type="text" placeholder="City or 'Online'"></div>
+        <div class="form-group"><label for="budget_min">Budget range (min $/hr)</label><input id="budget_min" name="budget_min" type="number" min="0" placeholder="30"></div>
+        <div class="form-group"><label for="budget_max">Budget range (max $/hr)</label><input id="budget_max" name="budget_max" type="number" min="0" placeholder="45"></div>
+        <div class="form-group"><label for="schedule">Preferred schedule</label><input id="schedule" name="schedule" type="text" placeholder="e.g. 2 evenings per week"></div>
+        <div class="form-group"><label for="start_date">Start date</label><input id="start_date" name="start_date" type="date"></div>
+        <div class="form-group full"><label for="details">Additional details</label><textarea id="details" name="details" placeholder="Anything else tutors should know"></textarea></div>
+        <div class="form-group"><label for="name">Your name *</label><input id="name" name="name" type="text" required></div>
+        <div class="form-group"><label for="email">Email *</label><input id="email" name="email" type="email" required></div>
+        <div class="form-group"><label for="phone">Phone (optional)</label><input id="phone" name="phone" type="tel"></div>
+        <div class="full">
+          <label class="checkbox-row"><input type="checkbox" name="consent" value="1" checked><span>I agree to be contacted by tutors and accept the <a href="{{ url_for('public.terms') }}">Terms</a> and <a href="{{ url_for('public.privacy') }}">Privacy Policy</a>.</span></label>
+        </div>
+        <div class="full"><button type="submit" class="btn btn-primary btn-lg btn-block">Post my request →</button></div>
+      </div>
+      <p class="hint mt-2">By posting, your request becomes visible to matching tutors. We'll email you when tutors apply.</p>
+    </form>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="grid grid-3">
+      <div class="card"><h3>1. Post your request</h3><p class="mt-1">Describe what you need in a few minutes. It's free and there's no obligation.</p></div>
+      <div class="card"><h3>2. Receive applications</h3><p class="mt-1">Qualified tutors respond with their rates, availability, and a personal message.</p></div>
+      <div class="card"><h3>3. Choose &amp; book</h3><p class="mt-1">Compare proposals, message tutors, and book the one that fits best.</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

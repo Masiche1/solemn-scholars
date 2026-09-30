@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Admin Overview — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% set active = 'overview' %}
+      {% include "partials/admin_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Admin Overview</h1>
+        <p class="muted mb-3">Marketplace health at a glance.</p>
+
+        <div class="dash-grid cols-4 mb-3">
+          <div class="dash-stat"><div class="icon">👥</div><div class="num">{{ stats.users }}</div><div class="label">Total users</div></div>
+          <div class="dash-stat"><div class="icon">🎓</div><div class="num">{{ stats.tutors }}</div><div class="label">Tutor profiles</div></div>
+          <div class="dash-stat"><div class="icon">✅</div><div class="num">{{ stats.approved_tutors }}</div><div class="label">Approved tutors</div></div>
+          <div class="dash-stat"><div class="icon">⏳</div><div class="num">{{ stats.pending_profiles }}</div><div class="label">Pending profiles</div></div>
+          <div class="dash-stat"><div class="icon">📋</div><div class="num">{{ stats.jobs }}</div><div class="label">Jobs</div></div>
+          <div class="dash-stat"><div class="icon">🔓</div><div class="num">{{ stats.open_jobs }}</div><div class="label">Open jobs</div></div>
+          <div class="dash-stat"><div class="icon">📮</div><div class="num">{{ stats.applications }}</div><div class="label">Applications</div></div>
+          <div class="dash-stat"><div class="icon">🎯</div><div class="num">{{ stats.new_leads }}</div><div class="label">New leads</div></div>
+          <div class="dash-stat"><div class="icon">📅</div><div class="num">{{ stats.bookings }}</div><div class="label">Bookings</div></div>
+          <div class="dash-stat"><div class="icon">⭐</div><div class="num">{{ stats.reviews }}</div><div class="label">Reviews</div></div>
+          <div class="dash-stat"><div class="icon">🚩</div><div class="num">{{ stats.flagged_reviews }}</div><div class="label">Flagged reviews</div></div>
+          <div class="dash-stat"><div class="icon">✅</div><div class="num">{{ stats.completed_bookings }}</div><div class="label">Completed</div></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="flex-between mb-2"><h3 style="margin:0;">Pending profile approvals</h3><a href="{{ url_for('admin.tutor_approvals') }}" class="text-coral" style="font-size:0.88rem;">Review all →</a></div>
+            {% if pending_profiles %}
+              {% for p in pending_profiles %}
+                <div class="flex-between" style="padding:12px 0; border-bottom:1px solid var(--bg-alt);">
+                  <div><strong>{{ p.user.name }}</strong><br><span class="muted" style="font-size:0.82rem;">{{ (p.headline[:50] + '…') if p.headline and p.headline|length > 50 else (p.headline or 'No headline') }}</span></div>
+                  <span class="badge badge-warn">{{ p.profile_status|title }}</span>
+                </div>
+              {% endfor %}
+            {% else %}<p class="muted">No profiles awaiting approval.</p>{% endif %}
+          </div>
+          <div class="card">
+            <div class="flex-between mb-2"><h3 style="margin:0;">Recent leads</h3><a href="{{ url_for('admin.leads') }}" class="text-coral" style="font-size:0.88rem;">View all →</a></div>
+            {% if recent_leads %}
+              {% for l in recent_leads %}
+                <div class="flex-between" style="padding:12px 0; border-bottom:1px solid var(--bg-alt);">
+                  <div style="min-width:0;"><strong>{{ l.subject or 'General' }}</strong><br><span class="muted" style="font-size:0.82rem;">{{ l.email }} · {{ l.source_page }}</span></div>
+                  <span class="badge {% if l.lifecycle_status=='converted' %}badge-success{% elif l.lifecycle_status=='lost' %}badge-muted{% elif l.lifecycle_status=='new' %}badge-warn{% else %}badge-navy{% endif %}">{{ l.lifecycle_status|title }}</span>
+                </div>
+              {% endfor %}
+            {% else %}<p class="muted">No leads yet.</p>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

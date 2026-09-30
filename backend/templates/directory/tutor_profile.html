@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.user.name }} — {{ profile.headline[:60] if profile.headline else 'Tutor' }} | Tutorly{% endblock %}
+{% block meta_desc %}{{ profile.user.name }} is a {{ profile.subjects|map(attribute='name')|join(', ') }} tutor. {{ profile.headline }} {{ 'Verified.' if profile.is_verified }} {{ profile.review_count }} reviews, from ${{ '%d'|format(profile.hourly_rate) }}/hour.{% endblock %}
+{% block content %}
+
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <a href="{{ url_for('directory.directory') }}" class="text-muted" style="font-size:0.9rem;">← Back to directory</a>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="profile-hero">
+      <div>
+        <img class="profile-photo" src="{{ profile.user.avatar_url or 'https://i.pravatar.cc/400?u=' ~ profile.user.id }}" alt="{{ profile.user.name }}">
+        <div class="mt-2">
+          {% if profile.is_verified %}<span class="badge badge-verified">✓ Identity verified</span>{% endif %}
+          {% if profile.verification_status == 'pending' %}<span class="badge badge-pending">Verification pending</span>{% endif %}
+        </div>
+      </div>
+
+      <div>
+        <h1 style="margin-bottom:6px;">{{ profile.user.name }}</h1>
+        <p style="color:var(--navy); font-weight:500; font-size:1.05rem; margin-bottom:14px;">{{ profile.headline or 'Tutor' }}</p>
+
+        <div class="flex gap" style="flex-wrap:wrap; margin-bottom:16px;">
+          <span class="stars">
+            {% for i in range(5) %}{% if i < (profile.avg_rating|round) %}★{% else %}<span class="empty">★</span>{% endif %}{% endfor %}
+          </span>
+          <span class="text-muted">{{ profile.avg_rating }} ({{ profile.review_count }} reviews)</span>
+        </div>
+
+        <div class="flex gap-sm" style="flex-wrap:wrap; margin-bottom:18px;">
+          {% for s in profile.subjects %}<span class="subject-chip">{{ s.name }}</span>{% endfor %}
+        </div>
+
+        <div class="grid grid-3 mb-3" style="gap:12px;">
+          <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Hourly rate</div><div class="fw-700 text-navy" style="font-size:1.2rem;">From ${{ '%d'|format(profile.hourly_rate) }}</div></div>
+          <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Teaches</div><div class="fw-700 text-navy" style="font-size:0.95rem;">{{ profile.modes_list|join(' &amp; ')|title }}</div></div>
+          <div class="card" style="padding:14px;"><div class="muted" style="font-size:0.8rem;">Based in</div><div class="fw-700 text-navy" style="font-size:0.95rem;">{{ profile.location_name or 'Online' }}</div></div>
+        </div>
+
+        <div class="flex gap" style="flex-wrap:wrap;">
+          <a href="{{ url_for('directory.message_tutor', tutor_id=profile.id) }}" class="btn btn-primary btn-lg">Message Tutor</a>
+          {% if current_user.is_authenticated and current_user.is_student %}
+            <a href="{{ url_for('directory.request_lesson', tutor_id=profile.id) }}" class="btn btn-outline btn-lg">Request a Lesson</a>
+          {% elif not current_user.is_authenticated %}
+            <a href="#contact" class="btn btn-outline btn-lg">Request a Lesson</a>
+          {% endif %}
+          {% if current_user.is_authenticated and current_user.is_student %}
+            <form action="{{ url_for('directory.save_tutor', tutor_id=profile.id) }}" method="post" style="display:inline;">
+              <button type="submit" class="btn btn-ghost btn-lg">{{ '★ Saved' if is_saved else '☆ Save' }}</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="profile-body-grid">
+      <!-- Main content -->
+      <div>
+        <div class="profile-section">
+          <h3>About {{ profile.user.name.split()[0] }}</h3>
+          <p>{{ profile.biography or 'No biography provided yet.' }}</p>
+        </div>
+
+        <div class="profile-section">
+          <h3>Teaching approach</h3>
+          <p>{{ profile.teaching_approach or 'Approach details coming soon.' }}</p>
+        </div>
+
+        <div class="profile-section">
+          <h3>Qualifications</h3>
+          <p style="white-space:pre-line;">{{ profile.qualifications or 'Qualifications to be confirmed.' }}</p>
+        </div>
+
+        <div class="profile-section">
+          <h3>Experience</h3>
+          <p>{{ profile.years_experience }} year{{ 's' if profile.years_experience != 1 else '' }} of tutoring experience · {{ profile.completed_lessons }} lessons completed · {{ profile.repeat_learner_rate }}% repeat learner rate.</p>
+        </div>
+
+        <div class="profile-section">
+          <h3>Subjects &amp; levels</h3>
+          <div class="flex gap-sm" style="flex-wrap:wrap;">
+            {% for s in profile.subjects %}<span class="subject-chip" style="padding:6px 14px;">{{ s.name }}</span>{% endfor %}
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h3>Availability</h3>
+          {% if profile.availability %}
+          <div class="avail-grid">
+            <div class="head"></div>
+            {% for d in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}<div class="head">{{ d }}</div>{% endfor %}
+            <div class="head" style="writing-mode:vertical-rl;">Slots</div>
+            {% for d in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+              {% set slot = profile.availability|selectattr('weekday','equalto',d)|first %}
+              <div class="avail-slot {% if slot %}available{% endif %}">{% if slot %}{{ slot.start_time }}{% else %}—{% endif %}</div>
+            {% endfor %}
+          </div>
+          {% else %}<p>Availability to be confirmed — send a message to ask.</p>{% endif %}
+        </div>
+
+        <div class="profile-section">
+          <h3>Lesson format &amp; location</h3>
+          <p>Teaches {{ profile.modes_list|join(' and ')|title }}. {% if 'in-person' in profile.modes_list %}Based in {{ profile.location_name }}; travel may be possible by arrangement.{% endif %} {% if 'online' in profile.modes_list %}Online lessons via video call, available worldwide.{% endif %} Languages: {{ profile.languages_list|join(', ') }}.</p>
+        </div>
+
+        <div class="profile-section">
+          <h3>Pricing &amp; packages</h3>
+          <p>Hourly rate: <strong>${{ '%d'|format(profile.hourly_rate) }}/hour</strong>. {% if profile.hourly_rate > 45 %}Discounts may be available for block bookings — ask when you message.{% else %}Great value for personalised one-to-one support.{% endif %}</p>
+        </div>
+
+        <!-- Reviews -->
+        <div class="profile-section" id="reviews">
+          <h3>Reviews ({{ reviews|length }})</h3>
+          {% if reviews %}
+            {% for r in reviews %}
+              <div class="card mb-2">
+                <div class="flex-between mb-1">
+                  <div class="stars">{% for i in range(5) %}{% if i < r.rating %}★{% else %}<span class="empty">★</span>{% endif %}{% endfor %}</div>
+                  <span class="muted" style="font-size:0.82rem;">{{ r.created_at.strftime('%b %Y') }}</span>
+                </div>
+                <p style="color:var(--navy);">{{ r.comment }}</p>
+              </div>
+            {% endfor %}
+          {% else %}<p>No reviews yet. Be the first to leave one after a lesson.</p>{% endif %}
+        </div>
+
+        <div class="profile-section">
+          <h3>Frequently asked questions</h3>
+          <div class="card mb-2"><h4>How do I book a lesson?</h4><p class="mt-1">Send a message to discuss your goals and agree a time. You'll arrange details directly with the tutor.</p></div>
+          <div class="card mb-2"><h4>Can I have a trial lesson?</h4><p class="mt-1">Many tutors offer a short introductory session — just ask in your first message.</p></div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div>
+        <div class="profile-cta-card" id="contact">
+          <h3 style="margin-bottom:8px;">Interested?</h3>
+          <p class="muted mb-2" style="font-size:0.92rem;">Not sure if this tutor is right for you? Send a quick message explaining your goals and receive a personalized response.</p>
+
+          <div class="mb-2" style="font-size:0.9rem;">
+            <div class="flex-between" style="padding:8px 0; border-bottom:1px solid var(--bg-alt);"><span class="muted">Response time</span><strong>{{ profile.response_time }}</strong></div>
+            <div class="flex-between" style="padding:8px 0; border-bottom:1px solid var(--bg-alt);"><span class="muted">Lessons completed</span><strong>{{ profile.completed_lessons }}</strong></div>
+            <div class="flex-between" style="padding:8px 0; border-bottom:1px solid var(--bg-alt);"><span class="muted">Repeat learners</span><strong>{{ profile.repeat_learner_rate }}%</strong></div>
+            <div class="flex-between" style="padding:8px 0;"><span class="muted">Rate</span><strong>${{ '%d'|format(profile.hourly_rate) }}/hr</strong></div>
+          </div>
+
+          <div class="mb-2">
+            <h4 style="font-size:0.92rem; margin-bottom:8px;">Trust signals</h4>
+            <ul class="clean" style="font-size:0.88rem;">
+              <li>Identity {{ 'verified' if profile.is_verified else 'pending' }}</li>
+              <li>Qualifications {{ 'verified' if profile.is_verified else 'pending' }}</li>
+              <li>Background check where applicable</li>
+            </ul>
+          </div>
+
+          <a href="{{ url_for('directory.message_tutor', tutor_id=profile.id) }}" class="btn btn-primary btn-block mb-1">Message Tutor</a>
+          {% if current_user.is_authenticated and current_user.is_student %}
+            <a href="{{ url_for('directory.request_lesson', tutor_id=profile.id) }}" class="btn btn-outline btn-block">Request a Lesson</a>
+          {% elif current_user.is_authenticated %}
+            <p class="muted" style="font-size:0.85rem;">Only student accounts can request lessons.</p>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-block">Log in to request a lesson</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

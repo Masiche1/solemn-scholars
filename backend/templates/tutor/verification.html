@@ -1,0 +1,539 @@
+{% extends "base.html" %}
+{% block title %}Identity Verification — TutorsDen{% endblock %}
+
+{% block content %}
+
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+
+  {% include "partials/dash_nav.html" with context %}
+
+  <main class="dash-main" aria-labelledby="verification-title">
+
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; margin-bottom:24px;">
+      <div>
+        <div class="eyebrow">Tutor verification</div>
+        <h1 id="verification-title" style="margin-bottom:8px;">
+          Identity Verification
+        </h1>
+        <p class="muted" style="max-width:700px; margin:0;">
+          Verify your identity and qualifications to help students make informed
+          decisions when choosing a tutor.
+        </p>
+      </div>
+
+      <a href="{{ url_for('tutor.edit_profile') }}" class="btn btn-secondary">
+        View my profile
+      </a>
+    </div>
+
+    {# ------------------------------------------------------------
+       STATUS
+       ------------------------------------------------------------ #}
+
+    {% set verification_status = profile.verification_status or 'not_started' %}
+
+    <div
+      class="card mb-3 verification-status-card
+      {% if verification_status == 'verified' %}verification-card-verified
+      {% elif verification_status == 'pending' %}verification-card-pending
+      {% elif verification_status == 'rejected' %}verification-card-rejected
+      {% endif %}"
+      role="status"
+      aria-live="polite"
+    >
+
+      <div style="display:flex; align-items:flex-start; gap:16px;">
+
+        <div class="verification-icon" aria-hidden="true">
+          {% if verification_status == 'verified' %}
+            ✓
+          {% elif verification_status == 'pending' %}
+            ⏳
+          {% elif verification_status == 'rejected' %}
+            !
+          {% else %}
+            🔒
+          {% endif %}
+        </div>
+
+        <div style="flex:1; min-width:220px;">
+
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <h2 style="margin:0; font-size:1.15rem;">
+              Verification status
+            </h2>
+
+            {% if verification_status == 'verified' %}
+              <span class="badge badge-success">Verified</span>
+
+            {% elif verification_status == 'pending' %}
+              <span class="badge badge-warn">Under review</span>
+
+            {% elif verification_status == 'rejected' %}
+              <span class="badge badge-danger">Action required</span>
+
+            {% else %}
+              <span class="badge badge-muted">Not started</span>
+            {% endif %}
+          </div>
+
+          <p class="muted mt-1" style="margin-bottom:0; font-size:.9rem;">
+
+            {% if verification_status == 'verified' %}
+              Your submitted information has been reviewed and your identity
+              has been verified. A verification badge may appear on your
+              public tutor profile.
+
+            {% elif verification_status == 'pending' %}
+              Your verification submission has been received and is currently
+              being reviewed.
+
+            {% elif verification_status == 'rejected' %}
+              We could not approve your verification submission.
+              Review the feedback below and submit corrected information.
+
+            {% else %}
+              Complete the verification process below to submit your
+              information for review.
+            {% endif %}
+
+          </p>
+
+        </div>
+      </div>
+    </div>
+
+
+    {# ------------------------------------------------------------
+       REJECTION FEEDBACK
+       ------------------------------------------------------------ #}
+
+    {% if verification_status == 'rejected' and verification_rejection_reason %}
+      <div class="card mb-3" style="border-left:4px solid var(--danger, #dc3545);">
+        <h2 style="font-size:1rem; margin:0 0 8px;">
+          Review required
+        </h2>
+
+        <p style="margin:0;">
+          {{ verification_rejection_reason }}
+        </p>
+      </div>
+    {% endif %}
+
+
+    {# ------------------------------------------------------------
+       REQUIREMENTS
+       ------------------------------------------------------------ #}
+
+    <div class="card mb-3">
+
+      <div style="margin-bottom:18px;">
+        <h2 style="margin:0 0 6px; font-size:1.15rem;">
+          Verification requirements
+        </h2>
+
+        <p class="muted" style="margin:0; font-size:.9rem;">
+          Depending on the services you provide, you may be asked to submit
+          some or all of the following documents.
+        </p>
+      </div>
+
+      <div class="grid grid-2">
+
+        <div class="verification-requirement">
+          <span class="requirement-icon" aria-hidden="true">🪪</span>
+          <div>
+            <strong>Government-issued photo ID</strong>
+            <div class="muted">
+              Passport, national ID card, driving licence, or another
+              accepted government-issued identification document.
+            </div>
+          </div>
+        </div>
+
+        <div class="verification-requirement">
+          <span class="requirement-icon" aria-hidden="true">🎓</span>
+          <div>
+            <strong>Qualification proof</strong>
+            <div class="muted">
+              Degree certificate, teaching qualification, professional
+              certification, or other relevant evidence.
+            </div>
+          </div>
+        </div>
+
+        <div class="verification-requirement">
+          <span class="requirement-icon" aria-hidden="true">📋</span>
+          <div>
+            <strong>Background check</strong>
+            <div class="muted">
+              A background or criminal-record check may be required for
+              tutors working with children or other protected learners.
+            </div>
+          </div>
+        </div>
+
+        <div class="verification-requirement">
+          <span class="requirement-icon" aria-hidden="true">🤳</span>
+          <div>
+            <strong>Selfie / identity confirmation</strong>
+            <div class="muted">
+              A clear image may be required to confirm that the submitted
+              identity document belongs to you.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    {# ------------------------------------------------------------
+       DOCUMENT STATUS
+       ------------------------------------------------------------ #}
+
+    {% if verification_documents %}
+
+      <div class="card mb-3">
+
+        <h2 style="margin:0 0 16px; font-size:1.15rem;">
+          Submitted documents
+        </h2>
+
+        <div class="verification-documents">
+
+          {% for document in verification_documents %}
+
+            <div class="verification-document-row">
+
+              <div>
+                <strong>{{ document.label }}</strong>
+
+                {% if document.filename %}
+                  <div class="muted" style="font-size:.82rem;">
+                    {{ document.filename }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div>
+                {% if document.status == 'approved' %}
+                  <span class="badge badge-success">Approved</span>
+
+                {% elif document.status == 'pending' %}
+                  <span class="badge badge-warn">Under review</span>
+
+                {% elif document.status == 'rejected' %}
+                  <span class="badge badge-danger">Needs replacement</span>
+
+                {% else %}
+                  <span class="badge badge-muted">Not submitted</span>
+                {% endif %}
+              </div>
+
+            </div>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+    {% endif %}
+
+
+    {# ------------------------------------------------------------
+       SUBMISSION FORM
+       ------------------------------------------------------------ #}
+
+    {% if verification_status not in ('verified', 'pending') %}
+
+      <div class="card">
+
+        <div style="margin-bottom:20px;">
+          <h2 style="margin:0 0 6px; font-size:1.15rem;">
+            Submit for verification
+          </h2>
+
+          <p class="muted" style="margin:0; font-size:.9rem;">
+            Upload clear, valid documents. Your verification information
+            will only be accessible to authorized personnel who need it
+            for verification, safety, fraud prevention, or legal purposes.
+          </p>
+        </div>
+
+        <form
+          action="{{ url_for('tutor.verification') }}"
+          method="post"
+          enctype="multipart/form-data"
+          novalidate
+        >
+
+          {% if csrf_token is defined %}
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+          {% endif %}
+
+
+          <div class="form-group">
+
+            <label for="id_doc">
+              Government-issued photo ID
+              <span aria-hidden="true">*</span>
+            </label>
+
+            <input
+              id="id_doc"
+              name="id_doc"
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              required
+              aria-describedby="id_doc_help"
+            >
+
+            <small id="id_doc_help" class="muted">
+              Accepted formats: JPG, PNG, PDF. Maximum file size is
+              {{ max_upload_size_mb|default(10) }} MB.
+            </small>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="qual_doc">
+              Qualification proof
+              <span aria-hidden="true">*</span>
+            </label>
+
+            <input
+              id="qual_doc"
+              name="qual_doc"
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              required
+              aria-describedby="qual_doc_help"
+            >
+
+            <small id="qual_doc_help" class="muted">
+              Upload a clear certificate or other accepted qualification
+              evidence.
+            </small>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="background_doc">
+              Background check
+            </label>
+
+            <input
+              id="background_doc"
+              name="background_doc"
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              aria-describedby="background_doc_help"
+            >
+
+            <small id="background_doc_help" class="muted">
+              Required where applicable based on your tutoring services,
+              learner age group, or safeguarding requirements.
+            </small>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="selfie_doc">
+              Selfie / identity confirmation
+            </label>
+
+            <input
+              id="selfie_doc"
+              name="selfie_doc"
+              type="file"
+              accept=".jpg,.jpeg,.png"
+              aria-describedby="selfie_doc_help"
+            >
+
+            <small id="selfie_doc_help" class="muted">
+              Use a clear, recent image where your face and the ID are
+              visible if identity confirmation is requested.
+            </small>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label class="check-pill"
+                   style="max-width:fit-content; display:flex; gap:8px;">
+
+              <input
+                type="checkbox"
+                name="documents_confirmed"
+                value="1"
+                required
+              >
+
+              <span>
+                I confirm that the information and documents I submit are
+                genuine, accurate, and belong to me.
+              </span>
+
+            </label>
+
+          </div>
+
+
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+            >
+              Submit for verification
+            </button>
+
+            <span class="muted" style="font-size:.82rem;">
+              By submitting, you agree that TutorsDen may review the
+              information for verification and safety purposes.
+            </span>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    {% elif verification_status == 'pending' %}
+
+      <div class="card">
+
+        <h2 style="margin:0 0 8px; font-size:1.15rem;">
+          Verification in progress
+        </h2>
+
+        <p class="muted" style="margin:0;">
+          No further action is required right now. We will notify you when
+          your verification has been reviewed.
+        </p>
+
+      </div>
+
+    {% elif verification_status == 'verified' %}
+
+      <div class="card">
+
+        <h2 style="margin:0 0 8px; font-size:1.15rem;">
+          You're verified
+        </h2>
+
+        <p class="muted" style="margin:0 0 16px;">
+          Your verification status is active. Please keep your profile
+          information accurate and notify us if any important information
+          changes.
+        </p>
+
+        <a href="{{ url_for('tutor.edit_profile') }}" class="btn btn-primary">
+          Manage profile
+        </a>
+
+      </div>
+
+    {% endif %}
+
+  </main>
+</div>
+
+  </div>
+</section>
+
+<style>
+  .verification-status-card {
+    border: 1px solid var(--border, #e5e7eb);
+  }
+
+  .verification-card-verified {
+    background: linear-gradient(135deg, #e6f6ee, #fff);
+    border-color: #cdeed9;
+  }
+
+  .verification-card-pending {
+    background: linear-gradient(135deg, #fff6e6, #fff);
+    border-color: #ffe6bf;
+  }
+
+  .verification-card-rejected {
+    background: linear-gradient(135deg, #fff0f0, #fff);
+    border-color: #f5cccc;
+  }
+
+  .verification-icon {
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,.8);
+    font-size:1.35rem;
+    flex-shrink:0;
+  }
+
+  .verification-requirement {
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:14px;
+    border:1px solid var(--border, #e5e7eb);
+    border-radius:10px;
+  }
+
+  .requirement-icon {
+    font-size:1.35rem;
+    line-height:1;
+  }
+
+  .verification-requirement strong {
+    display:block;
+    margin-bottom:3px;
+  }
+
+  .verification-requirement .muted {
+    font-size:.85rem;
+    line-height:1.5;
+  }
+
+  .verification-documents {
+    border-top:1px solid var(--border, #e5e7eb);
+  }
+
+  .verification-document-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    padding:14px 0;
+    border-bottom:1px solid var(--border, #e5e7eb);
+  }
+
+  .verification-document-row:last-child {
+    border-bottom:0;
+  }
+
+  @media (max-width:640px) {
+    .verification-document-row {
+      align-items:flex-start;
+      flex-direction:column;
+    }
+  }
+</style>
+
+{% endblock %}

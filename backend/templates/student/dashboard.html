@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Hello, {{ current_user.name.split()[0] }} 👋</h1>
+        <p class="muted mb-3">Here's an overview of your tutoring activity.</p>
+
+        <div class="dash-grid">
+          <div class="dash-stat"><div class="icon">⭐</div><div class="num">{{ saved_count }}</div><div class="label">Saved tutors</div></div>
+          <div class="dash-stat"><div class="icon">📋</div><div class="num">{{ my_jobs|length }}</div><div class="label">Job requests</div></div>
+          <div class="dash-stat"><div class="icon">📅</div><div class="num">{{ my_bookings|length }}</div><div class="label">Bookings</div></div>
+          <div class="dash-stat"><div class="icon">💬</div><div class="num">{{ convo_count }}</div><div class="label">Conversations</div></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="flex-between mb-2"><h3 style="margin:0;">Recent job requests</h3><a href="{{ url_for('student.job_requests') }}" class="text-coral" style="font-size:0.88rem;">View all →</a></div>
+            {% if my_jobs %}
+              {% for job in my_jobs[:4] %}
+                <div class="flex-between" style="padding:12px 0; border-bottom:1px solid var(--bg-alt);">
+                  <div><strong>{{ job.title }}</strong><br><span class="muted" style="font-size:0.82rem;">{{ job.subject }} · {{ job.application_count }} applicants</span></div>
+                  <span class="badge {% if job.status=='open' %}badge-success{% else %}badge-muted{% endif %}">{{ job.status|title }}</span>
+                </div>
+              {% endfor %}
+            {% else %}<p class="muted">No job requests yet. <a href="{{ url_for('student.job_requests') }}">Post one</a> to find tutors.</p>{% endif %}
+          </div>
+          <div class="card">
+            <div class="flex-between mb-2"><h3 style="margin:0;">Recent bookings</h3><a href="{{ url_for('student.bookings') }}" class="text-coral" style="font-size:0.88rem;">View all →</a></div>
+            {% if my_bookings %}
+              {% for b in my_bookings %}
+                <div class="flex-between" style="padding:12px 0; border-bottom:1px solid var(--bg-alt);">
+                  <div><strong>{{ b.subject }}</strong><br><span class="muted" style="font-size:0.82rem;">{{ b.tutor.name }} · {{ b.start_at.strftime('%d %b') if b.start_at else 'TBD' }}</span></div>
+                  <span class="badge badge-navy">{{ b.status|title }}</span>
+                </div>
+              {% endfor %}
+            {% else %}<p class="muted">No bookings yet. <a href="{{ url_for('directory.directory') }}">Find a tutor</a> to get started.</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="card mt-3" style="background:linear-gradient(135deg, var(--coral-soft), #fff); border-color:#ffd9cc;">
+          <div class="flex gap" style="align-items:center; flex-wrap:wrap;">
+            <div style="flex:1; min-width:240px;"><h3 style="margin:0;">Looking for your next tutor?</h3><p class="muted mt-1" style="margin-bottom:0;">Browse verified tutors or post a request.</p></div>
+            <a href="{{ url_for('directory.directory') }}" class="btn btn-primary">Find a Tutor</a>
+            <a href="{{ url_for('student.job_requests') }}" class="btn btn-outline">Post a Job</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

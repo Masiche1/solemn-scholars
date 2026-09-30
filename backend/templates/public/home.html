@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}TutorsDen — Find the right tutor for every learning goal{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Personalized support · Better outcomes</div>
+        <h1>Find the right tutor for every learning goal.</h1>
+        <p class="lead">Compare trusted, verified tutors, see transparent pricing, and book one-to-one support that fits your schedule — online or in person.</p>
+        <div class="hero-actions">
+          <a href="#search" class="btn btn-primary btn-lg">Find a Tutor</a>
+          <a href="{{ url_for('public.become_a_tutor') }}" class="btn btn-outline btn-lg">I'm a Tutor</a>
+        </div>
+        <div class="mt-3 flex flex-center gap">
+          <span class="stars">★★★★★</span>
+          <span class="text-muted" style="font-size:0.9rem;">Trusted by thousands of families · {{ total_lessons|default(0) }}+ lessons completed</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img class="hero-img" src="https://images.unsplash.com/photo-1583468991267-3f068b607ae1?w=900&q=80" alt="A tutor helping a student with their studies">
+        <div class="hero-stat-card">
+          <div class="num">{{ total_tutors|default(0) }}+</div>
+          <div class="label">Verified tutors ready to help</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH PANEL -->
+<section class="section-sm" id="search" style="margin-top:-20px;">
+  <div class="container">
+    <form class="search-panel" action="{{ url_for('public.find_a_tutor') }}" method="post" data-quick-search>
+      <h3>Find your tutor in minutes</h3>
+      <p class="muted mb-2" style="font-size:0.92rem;">Tell us what you need and we'll show you matching tutors right away.</p>
+      <div class="search-grid">
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject">
+            <option value="">Any subject</option>
+            {% for s in subjects %}
+              <option value="{{ s.slug }}">{{ s.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="level">Student level</label>
+          <select id="level" name="level">
+            <option value="">Any level</option>
+            <option>Primary</option><option>11+</option><option>KS3</option>
+            <option>GCSE</option><option>A-Level</option><option>University</option><option>Adult</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="mode">Online or in-person</label>
+          <select id="mode" name="mode">
+            <option value="">Either</option>
+            <option value="online">Online</option>
+            <option value="in-person">In-person</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input id="location" name="location" type="text" placeholder="City or postcode">
+        </div>
+        <div class="form-group">
+          <label for="schedule">Preferred day &amp; time</label>
+          <input id="schedule" name="schedule" type="text" placeholder="e.g. weekday evenings">
+        </div>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required>
+        </div>
+        <div class="full">
+          <label class="checkbox-row">
+            <input type="checkbox" name="consent" value="1" checked>
+            <span>I agree to be contacted about matching tutors. See our <a href="{{ url_for('public.privacy') }}">Privacy Policy</a>.</span>
+          </label>
+        </div>
+        <div class="full">
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Show Me Tutors →</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<section class="section-sm">
+  <div class="container">
+    <div class="trust-bar">
+      <div class="trust-item"><div class="icon">✓</div><div><div class="t">Verified tutors</div><div class="s">ID &amp; qualifications checked</div></div></div>
+      <div class="trust-item"><div class="icon">📚</div><div><div class="t">{{ total_lessons|default(0)|string + '+' }} lessons</div><div class="s">Successfully completed</div></div></div>
+      <div class="trust-item"><div class="icon">🔒</div><div><div class="t">Secure messaging</div><div class="s">Safe, in-platform contact</div></div></div>
+      <div class="trust-item"><div class="icon">🌍</div><div><div class="t">Flexible options</div><div class="s">Online &amp; in-person</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container text-center">
+    <div class="eyebrow">How it works</div>
+    <h2 class="mb-1">Three simple steps to start learning</h2>
+    <p class="lead-text" style="margin:0 auto 48px;">We've removed the guesswork so you can focus on what matters — making progress.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Tell us what you need</h3>
+        <p class="muted">Share your subject, level, schedule, and goals. It takes less than a minute.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Compare suitable tutors</h3>
+        <p class="muted">Browse verified profiles with ratings, reviews, and transparent pricing.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Message, book &amp; learn</h3>
+        <p class="muted">Contact your favourite tutor, agree details, and start your first lesson.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED TUTORS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="flex-between mb-3">
+      <div>
+        <div class="eyebrow">Featured tutors</div>
+        <h2>Meet a few of our top-rated tutors</h2>
+      </div>
+      <a href="{{ url_for('directory.directory') }}" class="btn btn-outline">Browse all tutors →</a>
+    </div>
+    <div class="grid grid-4">
+      {% for profile in featured %}
+        {% include "partials/tutor_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- POPULAR SUBJECTS -->
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">Popular subjects</div>
+    <h2 class="mb-3">Find support in any subject</h2>
+    <div class="subject-grid">
+      {% for s in subjects[:8] %}
+        {% include "partials/subject_card.html" %}
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{{ url_for('public.subjects_index') }}" class="btn btn-outline btn-lg">Browse all subjects →</a>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Support built around the learner</div>
+        <h2 class="mb-2">More than lessons — a path to confidence</h2>
+        <p class="lead-text mb-3">Every TutorsDen tutor is here to help learners feel capable and prepared. Here's what that looks like in practice.</p>
+        <ul class="clean">
+          <li>Personalized lesson plans tailored to each learner's goals and pace.</li>
+          <li>Exam and assignment support with past-paper practice and feedback.</li>
+          <li>Confidence-building instruction that turns anxiety into achievement.</li>
+          <li>Progress tracking so you can see how far you've come.</li>
+        </ul>
+        <a href="{{ url_for('public.how_it_works') }}" class="btn btn-primary mt-3">See how it works</a>
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1583468982228-19f19164aee2?w=800&q=80" alt="A student working with a tutor" style="border-radius:var(--radius-lg); box-shadow:var(--shadow-lg);">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="section">
+  <div class="container">
+    <div class="text-center mb-4">
+      <div class="eyebrow">Loved by families</div>
+      <h2>Real stories, real progress</h2>
+    </div>
+    <div class="grid grid-3">
+      <div class="testimonial">
+        <div class="stars mb-2">★★★★★</div>
+        <p class="quote">"We tried three tutors before TutorsDen. Within two lessons my daughter's confidence completely changed. The verified profiles and reviews made choosing so much easier."</p>
+        <div class="who">
+          <img src="https://i.pravatar.cc/100?img=47" alt="Rebecca">
+          <div><div class="name">Rebecca W.</div><div class="role">Parent of GCSE student</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="stars mb-2">★★★★★</div>
+        <p class="quote">"My tutor broke down physics in a way that finally clicked. I went from a grade 5 to an 8 in one term. Couldn't have done it without TutorsDen."</p>
+        <div class="who">
+          <img src="https://i.pravatar.cc/100?img=33" alt="Liam">
+          <div><div class="name">Liam K.</div><div class="role">Year 11 student</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="stars mb-2">★★★★★</div>
+        <p class="quote">"As a tutor, the job feed is a game changer. I get relevant leads delivered to me and can focus on teaching instead of marketing myself."</p>
+        <div class="who">
+          <img src="https://i.pravatar.cc/100?img=15" alt="James">
+          <div><div class="name">James O.</div><div class="role">Coding tutor, 5+ years</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TUTOR RECRUITMENT -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80" alt="A tutor teaching online" style="border-radius:var(--radius-lg); box-shadow:var(--shadow-lg);">
+      </div>
+      <div>
+        <div class="eyebrow">For tutors</div>
+        <h2 class="mb-2">Turn your expertise into opportunity</h2>
+        <p class="lead-text mb-3">Create a profile, choose the jobs you want, and connect with learners who need your skills. Set your own rates, your own hours, and teach online or locally.</p>
+        <ul class="clean mb-3">
+          <li>Choose your own rates and availability</li>
+          <li>Apply to relevant jobs from a curated feed</li>
+          <li>Build reviews and a reputation that grows with you</li>
+          <li>Teach online or in person — your choice</li>
+        </ul>
+        <a href="{{ url_for('public.become_a_tutor') }}" class="btn btn-primary btn-lg">Become a Tutor</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="section">
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Ready to make progress?</h2>
+      <p>Find a trusted tutor or post your request today. It only takes a minute.</p>
+      <div class="flex-center" style="justify-content:center; gap:14px; flex-wrap:wrap;">
+        <a href="{{ url_for('directory.directory') }}" class="btn btn-primary btn-lg">Find a Tutor</a>
+        <a href="{{ url_for('public.post_a_job') }}" class="btn btn-outline btn-lg" style="border-color:#fff; color:#fff;">Post a Job</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

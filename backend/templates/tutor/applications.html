@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Applications — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Applications</h1>
+        <p class="muted mb-3">Track the tutoring jobs you've applied to.</p>
+        {% if applications %}
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Job</th><th>Subject</th><th>Proposed rate</th><th>Availability</th><th>Status</th><th>Applied</th><th></th></tr></thead>
+              <tbody>
+                {% for a in applications %}
+                <tr>
+                  <td><strong>{{ a.job.title }}</strong></td>
+                  <td>{{ a.job.subject or '—' }}</td>
+                  <td>${{ '%.0f'|format(a.proposed_rate) if a.proposed_rate else '—' }}/hr</td>
+                  <td><span class="muted" style="font-size:0.85rem;">{{ a.availability_note or '—' }}</span></td>
+                  <td><span class="badge {% if a.status=='accepted' %}badge-success{% elif a.status in ('declined','withdrawn') %}badge-muted{% else %}badge-navy{% endif %}">{{ a.status|title }}</span></td>
+                  <td class="muted" style="font-size:0.85rem;">{{ a.created_at.strftime('%d %b %Y') }}</td>
+                  <td><a href="{{ url_for('jobs.detail', job_id=a.job.id) }}" class="btn btn-ghost btn-sm">View job</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">📮</div><h3>No applications yet</h3><p>Browse the job feed and apply to requests that match your skills.</p><a href="{{ url_for('tutor.job_feed') }}" class="btn btn-primary">Browse jobs</a></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

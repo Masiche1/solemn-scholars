@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Saved Tutors — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Saved Tutors</h1>
+        <p class="muted mb-3">Your shortlist of tutors you're interested in.</p>
+        {% if saved %}
+          <div class="grid grid-2">
+            {% for s in saved %}{% set profile = s.tutor_profile %}{% include "partials/tutor_card.html" %}{% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">⭐</div><h3>No saved tutors yet</h3><p>Tap the save button on any tutor profile to add them here.</p><a href="{{ url_for('directory.directory') }}" class="btn btn-primary">Browse tutors</a></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

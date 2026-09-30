@@ -1,0 +1,11 @@
+{# Admin sidebar nav. Expects: active (string key) #}
+<aside class="dash-nav">
+  <a href="{{ url_for('admin.overview') }}" class="{% if active=='overview' %}active{% endif %}">📊 Overview</a>
+  <a href="{{ url_for('admin.users') }}" class="{% if active=='users' %}active{% endif %}">👥 Users</a>
+  <a href="{{ url_for('admin.tutor_approvals') }}" class="{% if active=='approvals' %}active{% endif %}">✓ Tutor Approvals</a>
+  <a href="{{ url_for('admin.job_moderation') }}" class="{% if active=='jobs' %}active{% endif %}">📋 Job Moderation</a>
+  <a href="{{ url_for('admin.leads') }}" class="{% if active=='leads' %}active{% endif %}">🎯 Leads</a>
+  <a href="{{ url_for('admin.reviews') }}" class="{% if active=='reviews' %}active{% endif %}">⭐ Reviews</a>
+  <a href="{{ url_for('admin.analytics') }}" class="{% if active=='analytics' %}active{% endif %}">📈 Analytics</a>
+</aside>
+

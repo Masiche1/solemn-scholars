@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Tutor Job Feed — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="eyebrow">Job feed</div>
+    <h1 class="mb-1">Tutoring jobs looking for you</h1>
+    <p class="muted">Browse open requests from students and parents. Apply to the ones that match your expertise and schedule.</p>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="directory-layout">
+      <aside class="filters-card card">
+        <h3 style="margin-bottom:14px; font-size:1.1rem;">Filters</h3>
+        <form action="{{ url_for('jobs.feed') }}" method="get" id="jobFilterForm">
+          <div class="filter-group"><h4>Subject</h4><input type="text" name="subject" value="{{ filters.get('subject','') }}" placeholder="e.g. Maths"></div>
+          <div class="filter-group"><h4>Level</h4><input type="text" name="level" value="{{ filters.get('level','') }}" placeholder="e.g. GCSE"></div>
+          <div class="filter-group"><h4>Mode</h4>
+            <select name="mode">
+              <option value="">Either</option>
+              <option value="online" {% if filters.get('mode')=='online' %}selected{% endif %}>Online</option>
+              <option value="in-person" {% if filters.get('mode')=='in-person' %}selected{% endif %}>In-person</option>
+            </select>
+          </div>
+          <div class="filter-group"><h4>Location</h4><input type="text" name="location" value="{{ filters.get('location','') }}" placeholder="City"></div>
+          <div class="filter-group"><h4>Min budget ($/hr)</h4><input type="number" name="min_budget" value="{{ filters.get('min_budget','') }}" min="0"></div>
+          <div class="filter-group"><label class="checkbox-row"><input type="checkbox" name="new_only" value="1" {% if filters.get('new_only')=='1' %}checked{% endif %}><span>New jobs only</span></label></div>
+          <button type="submit" class="btn btn-primary btn-block">Apply filters</button>
+        </form>
+      </aside>
+
+      <div>
+        <div class="sort-bar"><span class="result-count">{{ jobs|length }} open job{{ 's' if jobs|length != 1 else '' }}</span></div>
+        {% if jobs %}
+          <div class="grid grid-2">
+            {% for job in jobs %}{% include "partials/job_card.html" %}{% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">📋</div><h3>No jobs match your filters</h3><p>Try widening your filters, or check back soon — new jobs are posted daily.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="card" style="background:var(--blue-soft); border-color:#c9ddf6;">
+      <div class="flex gap" style="align-items:center; flex-wrap:wrap;">
+        <div style="flex:1; min-width:240px;">
+          <h3 style="margin:0; color:var(--blue);">Are you a tutor?</h3>
+          <p class="muted mt-1" style="margin-bottom:0;">Create a profile to apply for jobs and get discovered by students.</p>
+        </div>
+        <a href="{{ url_for('auth.signup', role='tutor') }}" class="btn btn-secondary">Become a Tutor</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

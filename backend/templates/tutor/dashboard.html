@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Tutor Dashboard — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Hello, {{ current_user.name.split()[0] }} 👋</h1>
+        <p class="muted mb-3">Here's how your tutoring profile is performing.</p>
+
+        <div class="card mb-3" style="background:linear-gradient(135deg, var(--coral-soft), #fff); border-color:#ffd9cc;">
+          <div class="flex gap" style="align-items:center; flex-wrap:wrap;">
+            <div style="flex:1; min-width:220px;">
+              <h3 style="margin:0;">Profile status:
+                {% if profile.profile_status == 'approved' %}<span class="badge badge-success">Live & approved</span>
+                {% elif profile.profile_status == 'pending' %}<span class="badge badge-warn">Pending review</span>
+                {% elif profile.profile_status == 'rejected' %}<span class="badge badge-muted">Needs changes</span>
+                {% else %}<span class="badge badge-navy">Draft</span>{% endif %}
+              </h3>
+              {% if profile.verification_status == 'verified' %}
+                <p class="muted mt-1" style="margin-bottom:0;">✓ Identity verified</p>
+              {% elif profile.verification_status == 'pending' %}
+                <p class="muted mt-1" style="margin-bottom:0;">⏳ Verification under review</p>
+              {% else %}
+                <p class="muted mt-1" style="margin-bottom:0;">Verification not started — build trust with students.</p>
+              {% endif %}
+            </div>
+            <a href="{{ url_for('tutor.edit_profile') }}" class="btn btn-primary">Edit profile</a>
+            {% if profile.verification_status != 'verified' %}<a href="{{ url_for('tutor.verification') }}" class="btn btn-outline">Get verified</a>{% endif %}
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="dash-stat"><div class="icon">⭐</div><div class="num">{{ profile.avg_rating }}</div><div class="label">Avg rating</div></div>
+          <div class="dash-stat"><div class="icon">📚</div><div class="num">{{ profile.review_count }}</div><div class="label">Reviews</div></div>
+          <div class="dash-stat"><div class="icon">🎓</div><div class="num">{{ profile.completed_lessons }}</div><div class="label">Lessons</div></div>
+          <div class="dash-stat"><div class="icon">💬</div><div class="num">{{ convo_count }}</div><div class="label">Conversations</div></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="flex-between mb-2"><h3 style="margin:0;">Recent applications</h3><a href="{{ url_for('tutor.applications') }}" class="text-coral" style="font-size:0.88rem;">View all →</a></div>
+            {% if applications %}
+              {% for a in applications %}
+                <div class="flex-between" style="padding:12px 0; border-bottom:1px solid var(--bg-alt);">
+                  <div style="min-width:0;">
+                    <strong style="display:block;">{{ a.job.title }}</strong>
+                    <span class="muted" style="font-size:0.82rem;">{{ a.job.subject }} · proposed ${{ '%.0f'|format(a.proposed_rate) if a.proposed_rate else '—' }}/hr</span>
+                  </div>
+                  <span class="badge {% if a.status=='accepted' %}badge-success{% elif a.status=='declined' or a.status=='withdrawn' %}badge-muted{% else %}badge-navy{% endif %}">{{ a.status|title }}</span>
+                </div>
+              {% endfor %}
+            {% else %}<p class="muted">No applications yet. <a href="{{ url_for('tutor.job_feed') }}">Browse the job feed</a>.</p>{% endif %}
+          </div>
+          <div class="card">
+            <div class="flex-between mb-2"><h3 style="margin:0;">Upcoming sessions</h3><a href="{{ url_for('tutor.calendar') }}" class="text-coral" style="font-size:0.88rem;">Calendar →</a></div>
+            {% if upcoming %}
+              {% for b in upcoming %}
+                <div class="flex-between" style="padding:12px 0; border-bottom:1px solid var(--bg-alt);">
+                  <div><strong>{{ b.subject or 'Session' }}</strong><br><span class="muted" style="font-size:0.82rem;">{{ b.learner.name }} · {{ b.start_at.strftime('%d %b, %H:%M') if b.start_at else 'TBD' }}</span></div>
+                  <span class="badge badge-navy">{{ b.status|title }}</span>
+                </div>
+              {% endfor %}
+            {% else %}<p class="muted">No upcoming sessions. Keep your availability up to date.</p>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

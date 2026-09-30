@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Bookings — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% include "partials/dash_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Bookings</h1>
+        <p class="muted mb-3">Your scheduled and past sessions with tutors.</p>
+        {% if bookings %}
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Subject</th><th>Tutor</th><th>Date</th><th>Price</th><th>Payment</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                {% for b in bookings %}
+                <tr>
+                  <td><strong>{{ b.subject or 'General' }}</strong></td>
+                  <td>{{ b.tutor.name }}</td>
+                  <td>{{ b.start_at.strftime('%d %b %Y, %H:%M') if b.start_at else 'TBD' }}</td>
+                  <td>${{ '%.0f'|format(b.price) if b.price else '—' }}</td>
+                  <td><span class="badge {% if b.payment_status=='paid' %}badge-success{% elif b.payment_status=='refunded' %}badge-muted{% else %}badge-navy{% endif %}">{{ b.payment_status|title }}</span></td>
+                  <td><span class="badge
+                    {% if b.status=='completed' %}badge-success
+                    {% elif b.status=='confirmed' %}badge-navy
+                    {% elif b.status=='cancelled' %}badge-muted
+                    {% else %}badge-warn{% endif %}">{{ b.status|title }}</span></td>
+                  <td>
+                    {% if b.meeting_url and b.status in ('pending','confirmed') %}
+                      <a href="{{ b.meeting_url }}" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Join</a>
+                    {% elif b.status=='completed' and not b.review %}
+                      <a href="{{ url_for('student.leave_review', booking_id=b.id) }}" class="btn btn-ghost btn-sm">Review</a>
+                    {% elif b.status=='completed' and b.review %}
+                      <span class="muted" style="font-size:0.82rem;">★ {{ b.review.rating }} reviewed</span>
+                    {% else %}
+                      <span class="muted" style="font-size:0.82rem;">—</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state"><div class="icon">📅</div><h3>No bookings yet</h3><p>Find a tutor and start a conversation to book your first session.</p><a href="{{ url_for('directory.directory') }}" class="btn btn-primary">Find a tutor</a></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

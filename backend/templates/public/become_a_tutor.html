@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Become a Tutor — TutorsDen{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">For tutors</div>
+        <h1 class="mb-1">Get discovered by learners looking for your expertise</h1>
+        <p class="lead-text mb-3">Join a growing community of tutors and connect with learners who value your skills. Set your own rates, choose your hours, and teach online or locally.</p>
+        <div class="hero-actions">
+          <a href="{{ url_for('auth.signup', role='tutor') }}" class="btn btn-primary btn-lg">Create Your Tutor Profile</a>
+          <a href="#benefits" class="btn btn-outline btn-lg">See benefits</a>
+        </div>
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&q=80" alt="A tutor teaching online" style="border-radius:var(--radius-lg); box-shadow:var(--shadow-lg);">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="benefits">
+  <div class="container">
+    <div class="eyebrow">Why tutor with us</div>
+    <h2 class="mb-3 text-center">Everything you need to grow your tutoring</h2>
+    <div class="grid grid-3">
+      <div class="card card-hover"><div style="font-size:1.8rem;">💲</div><h3 class="mt-1">Choose your own rates</h3><p class="mt-1">Set pricing that reflects your experience and subject. You're always in control.</p></div>
+      <div class="card card-hover"><div style="font-size:1.8rem;">📅</div><h3 class="mt-1">Set your availability</h3><p class="mt-1">Teach when it suits you. Update your calendar anytime.</p></div>
+      <div class="card card-hover"><div style="font-size:1.8rem;">📋</div><h3 class="mt-1">Apply to relevant jobs</h3><p class="mt-1">Browse a curated job feed and apply only to the opportunities that fit.</p></div>
+      <div class="card card-hover"><div style="font-size:1.8rem;">⭐</div><h3 class="mt-1">Build your reputation</h3><p class="mt-1">Collect reviews and ratings that help you stand out and win more students.</p></div>
+      <div class="card card-hover"><div style="font-size:1.8rem;">🌍</div><h3 class="mt-1">Teach online or locally</h3><p class="mt-1">Reach learners everywhere with online lessons, or teach in person nearby.</p></div>
+      <div class="card card-hover"><div style="font-size:1.8rem;">🔒</div><h3 class="mt-1">Secure &amp; supported</h3><p class="mt-1">Safe messaging, verified students, and a team that has your back.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container" style="max-width:820px;">
+    <div class="eyebrow">Getting started</div>
+    <h2 class="mb-3 text-center">Your path to your first student</h2>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><h3>Create account</h3><p class="muted">Sign up free in under a minute.</p></div>
+      <div class="step"><div class="step-num">2</div><h3>Add qualifications</h3><p class="muted">Tell us about your experience and credentials.</p></div>
+      <div class="step"><div class="step-num">3</div><h3>Select subjects</h3><p class="muted">Choose the subjects and levels you teach.</p></div>
+    </div>
+    <div class="steps mt-3">
+      <div class="step"><div class="step-num">4</div><h3>Set pricing</h3><p class="muted">Choose your hourly rate and availability.</p></div>
+      <div class="step"><div class="step-num">5</div><h3>Get verified</h3><p class="muted">Upload ID and qualifications for the verified badge.</p></div>
+      <div class="step"><div class="step-num">6</div><h3>Submit &amp; teach</h3><p class="muted">We review your profile, then you're live.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:560px;">
+    <div class="cta-banner">
+      <h2>Your knowledge can change someone's future.</h2>
+      <p>Join a growing community of tutors and connect with learners who value your expertise.</p>
+      <form action="{{ url_for('public.become_a_tutor') }}" method="post" style="text-align:left; background:#fff; padding:24px; border-radius:var(--radius); color:var(--text);">
+        <div class="form-group"><label for="name" style="color:var(--navy);">Your name</label><input id="name" name="name" type="text" required></div>
+        <div class="form-group"><label for="email" style="color:var(--navy);">Email</label><input id="email" name="email" type="email" required></div>
+        <div class="form-group"><label for="subjects" style="color:var(--navy);">Subjects you teach</label><input id="subjects" name="subjects" type="text" placeholder="e.g. Maths, Physics"></div>
+        <label class="checkbox-row mb-2"><input type="checkbox" name="consent" value="1" checked><span style="color:var(--text-muted);">I'd like to create a tutor profile and receive relevant opportunities.</span></label>
+        <button type="submit" class="btn btn-primary btn-block">Create Your Tutor Profile →</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

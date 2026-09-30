@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Locations — TutorsDen{% endblock %}
+{% block content %}
+<section class="hero" style="padding-bottom:0;">
+  <div class="container text-center">
+    <div class="eyebrow">Browse locations</div>
+    <h1 class="mb-1">Find tutors near you — or online</h1>
+    <p class="lead-text" style="margin:0 auto;">Search local tutors for in-person lessons, or choose online tutoring available anywhere.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="grid grid-4">
+      {% for loc in locations %}
+        <a href="{{ url_for('public.location_landing', slug=loc.slug) }}" class="subject-tile">
+          <div class="icon">📍</div>
+          <div class="name">{{ loc.name }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

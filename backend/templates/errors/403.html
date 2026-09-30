@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Access denied — Tutorly{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding:80px 0;">
+  <div class="container narrow text-center">
+    <div style="font-size:4.5rem; line-height:1;">🔒</div>
+    <h1 style="margin:16px 0 8px;">Access denied</h1>
+    <p class="muted" style="max-width:480px; margin:0 auto 24px;">You don't have permission to view this page. If you believe this is a mistake, try logging in with the appropriate account.</p>
+    <div class="flex gap" style="justify-content:center; flex-wrap:wrap;">
+      <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Log in</a>
+      <a href="{{ url_for('public.home') }}" class="btn btn-outline">Back to home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

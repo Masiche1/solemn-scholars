@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Job Moderation — Tutorly Admin{% endblock %}
+{% block content %}
+<section class="section-sm" style="padding-top:32px;">
+  <div class="container">
+    <div class="dash-layout">
+      {% set active = 'jobs' %}
+      {% include "partials/admin_nav.html" with context %}
+      <div class="dash-main">
+        <h1>Job Moderation</h1>
+        <p class="muted mb-3">Review, close, reopen, or remove tutoring jobs from the feed.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Title</th><th>Subject</th><th>Requester</th><th>Applicants</th><th>Status</th><th>Posted</th><th>Actions</th></tr></thead>
+            <tbody>
+              {% for job in jobs %}
+              <tr>
+                <td><strong>{{ job.title }}</strong></td>
+                <td>{{ job.subject or '—' }}</td>
+                <td class="muted" style="font-size:0.85rem;">{{ job.requester.name }}</td>
+                <td>{{ job.application_count }}</td>
+                <td><span class="badge {% if job.status=='open' %}badge-success{% elif job.status=='moderated' %}badge-warn{% else %}badge-muted{% endif %}">{{ job.status|title }}</span></td>
+                <td class="muted" style="font-size:0.85rem;">{{ job.age_label }}</td>
+                <td>
+                  <div class="flex gap" style="flex-wrap:wrap;">
+                    <a href="{{ url_for('jobs.detail', job_id=job.id) }}" class="btn btn-ghost btn-sm">View</a>
+                    {% if job.status == 'open' %}
+                      <form method="post" action="{{ url_for('admin.moderate_job', job_id=job.id) }}" style="display:inline;">
+                        <input type="hidden" name="action" value="close"><button type="submit" class="btn btn-outline btn-sm">Close</button>
+                      </form>
+                      <form method="post" action="{{ url_for('admin.moderate_job', job_id=job.id) }}" style="display:inline;">
+                        <input type="hidden" name="action" value="moderate"><button type="submit" class="btn btn-outline btn-sm">Moderate</button>
+                      </form>
+                    {% else %}
+                      <form method="post" action="{{ url_for('admin.moderate_job', job_id=job.id) }}" style="display:inline;">
+                        <input type="hidden" name="action" value="reopen"><button type="submit" class="btn btn-ghost btn-sm">Reopen</button>
+                      </form>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
